@@ -1,0 +1,24 @@
+title New Note (SPA)
+
+note left of Browser:
+- User types in "new note"
+- User clicks the submit button
+end note
+
+note over Browser: 
+- Creates a new note object from input\n  and pushes it to notes array in client
+- Clear form input and repaints notes on screen
+- Sends user input to the server
+end note
+
+Browser->Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa\n{"content":"new note","date":"2020-09-21"} (application/json)
+
+note over Server:
+Executes logic that handles POST requests to \n/exampleapp/new_note_spa endpoint:\n - parses data from request\n - validates data content\n - creates a new note  object, adding it to notes array\n - sets status 201 and sends response object to browser
+end note
+
+Server-->Browser: {"message":"note created"} (application/json)
+
+note over Browser:
+Outputs the response from server \nto the browser devtools console
+end note

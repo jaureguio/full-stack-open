@@ -1,0 +1,55 @@
+title New Note 
+
+note left of Browser:
+- User types in "new note"
+- User clicks the submit button
+end note
+note over Browser: Sends user input ("new note") to the server
+
+Browser->Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note\nFORM DATA note=new+note
+
+note over Server:
+Executes logic that handles POST requests to \n/exampleapp/new_note endpoint:\n - parses data from request\n - creates a new note  object, adding it to notes array\n - sends response with status code 302 to the browser
+end note
+
+Server-->Browser: URL REDIRECT location: /exampleapp/notes
+
+note over Browser:
+Reloads Notes page
+end note
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+Server-->Browser: text/html
+
+note over Browser:
+- Parses HTML received, creates DOM tree
+- Requests CSS resource main.css
+- Requests JS resource main.js
+end note
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+Server-->Browser: main.css (text/css)
+
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+Server-->Browser: main.js (application/javascript)
+
+note over Browser:
+- Parses CSS received, creates CSSOM
+- Using DOM and CSSOM trees, creates Render tree
+- Parses JS code and registers event handlers
+- Layouts and paints initial screen\n  based on Render tree
+- Requests JSON data from Server
+end note
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+
+note over Server:
+Sends notes as JSON data to browser client
+end note
+
+Server-->Browser: [..., {"content":"new note","date":"2020-09-21T13:59:37.543Z"}]
+
+note over Browser:
+- Executes the event handler that handles the JSON response \n(which includes the recently added note)
+- Dynamically updates the DOM and Render trees\n and repaints the screen
+end note
