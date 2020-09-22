@@ -12,3 +12,9 @@ Throughout the development of the projects/exercises proposed in the course, the
 The first part starts providing information related to the way the course is structured, the exercises submmitting system, and related info regarding the course logistics. The part is wrapped up with references to some of the fundamentals of the Web and Web development ecosystem. A quick walkthrough on the history of the Web and how the workflow for developing web pages/apps has changed with time is provided in this section.
 
 [Go to solutions](./part0)
+
+## [Part 1] (https://fullstackopen.com/en/part1)
+
+This part introduces modern JavaScript features used with React, and the UI library itself. Fundamental principles and best practices to follow when working with React and debugging strategies are presented as well.
+
+[Go to solutions](./part1)
