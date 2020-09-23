@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
 const Statistics = ({ feedback, stats }) => {
+  if(stats.total <= 0) 
+    return <p>No feedback given</p>
+
   return (
     <>
-      <h2>statistics</h2>
       <p>good {feedback.good}</p>
       <p>neutral {feedback.neutral}</p>
       <p>bad {feedback.bad}</p>
@@ -32,6 +34,7 @@ const App = () => {
       <button onClick={() => setGood(good + 1)}>good</button>
       <button onClick={() => setNeutral(neutral + 1)}>neutral</button>
       <button onClick={() => setBad(bad + 1)}>bad</button>
+      <h2>statistics</h2>
       <Statistics feedback={{ good, neutral, bad }} stats={stats} />
     </div>
   )
