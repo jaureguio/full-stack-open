@@ -12,25 +12,28 @@ const Button = ({ text, onClick }) => {
 }
 
 const Statistic = ({ text, value }) => (
-  <p>{text} {value}</p>
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 )
 
 const Statistics = ({ feedback, stats }) => {
   const { good, neutral, bad } = feedback
   const { total, average, positive } = stats
 
-  if(total <= 0) 
+  if (total <= 0)
     return <p>No feedback given</p>
 
   return (
-    <>
+    <table>
       <Statistic text="good" value={good} />
       <Statistic text="neutral" value={neutral} />
       <Statistic text="bad" value={bad} />
       <Statistic text="all" value={total} />
       <Statistic text="average" value={average} />
       <Statistic text="positive" value={positive} />
-    </>
+    </table>
   )
 }
 
@@ -41,8 +44,8 @@ const App = () => {
   const [bad, setBad] = useState(0)
 
   const total = good + neutral + bad
-  const average = (total > 0 ? (good - bad)/total : 0)
-  const positive = (total > 0 ? `${good/total*100} %` : 0)
+  const average = (total > 0 ? (good - bad) / total : 0)
+  const positive = (total > 0 ? `${good / total * 100} %` : 0)
   const stats = { total, average, positive }
 
   return (
@@ -57,6 +60,6 @@ const App = () => {
   )
 }
 
-ReactDOM.render(<App />, 
+ReactDOM.render(<App />,
   document.getElementById('root')
 )
