@@ -13,8 +13,12 @@ The first part starts providing information related to the way the course is str
 
 [Go to solutions](./part0)
 
-## [Part 1] (https://fullstackopen.com/en/part1)
+## [Part 1](https://fullstackopen.com/en/part1)
 
 This part introduces modern JavaScript features used with React, and the UI library itself. Fundamental principles and best practices to follow when working with React and debugging strategies are presented as well.
 
 [Go to solutions](./part1)
+
+## [Part 2](https://fullstackopen.com/en/part2)
+
+[Go to solutions](./part2)
