@@ -5,17 +5,13 @@ const Header = ({ course }) => <h1>{course}</h1>
 
 const Part = ({ info }) => <p>{info.name} {info.exercises}</p>
 
-// const Total = ({ parts }) => {
-//   const [part1, part2, part3] = parts
-//   return (
-//     <p>
-//       Number of exercises {part1.exercises + part2.exercises + part3.exercises}
-//     </p>
-//   )
-// }
+const Total = ({ total }) => <strong> total of {total} exercises</strong>
 
 const Course = ({ course }) => {
   const { name, parts } = course
+
+  const total = parts.reduce((total, next) => total + next.exercises, 0)
+
   return (
     <div>
       <Header course={name} />
@@ -25,6 +21,7 @@ const Course = ({ course }) => {
           info={part}
         />
       ))}
+      <Total total={total} />
     </div>
   )
 }
