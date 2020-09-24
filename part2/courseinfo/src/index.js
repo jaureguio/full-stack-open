@@ -5,23 +5,27 @@ const Header = ({ course }) => <h1>{course}</h1>
 
 const Part = ({ info }) => <p>{info.name} {info.exercises}</p>
 
-const Content = ({ parts }) => {
-  const [part1, part2, part3] = parts
-  return (
-    <>
-      <Part info={part1} />
-      <Part info={part2} />
-      <Part info={part3} />
-    </>
-  )
-}
+// const Total = ({ parts }) => {
+//   const [part1, part2, part3] = parts
+//   return (
+//     <p>
+//       Number of exercises {part1.exercises + part2.exercises + part3.exercises}
+//     </p>
+//   )
+// }
 
-const Total = ({ parts }) => {
-  const [part1, part2, part3] = parts
+const Course = ({ course }) => {
+  const { name, parts } = course
   return (
-    <p>
-      Number of exercises {part1.exercises + part2.exercises + part3.exercises}
-    </p>
+    <div>
+      <Header course={name} />
+      {parts.map(part => (
+        <Part 
+          key={part.name} 
+          info={part}
+        />
+      ))}
+    </div>
   )
 }
 
