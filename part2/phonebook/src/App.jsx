@@ -1,14 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", contact: "040-123456" },
-    { name: "Ada Lovelace", contact: "39-44-5323523" },
-    { name: "Dan Abramov", contact: "12-43-234345" },
-    { name: "Mary Poppendieck", contact: "39-23-6423122" },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
-  const [contact, setContact] = useState("");
+  const [number, setNumber] = useState("");
   const [filter, setFilter] = useState("");
 
   const handleChange = (setState) => (event) => setState(event.target.value)
@@ -18,9 +14,9 @@ const App = () => {
 
     const isAdded = persons.some(({ name }) => name === newName)
 
-    if(!newName.trim()) {
-      return
-    } else if(isAdded) {
+    if(!newName.trim()) return
+    
+    if(isAdded) {
       return alert(`${newName} is already added to phonebook`)
     }
 
@@ -28,20 +24,27 @@ const App = () => {
       ...persons,
       { 
         name: newName,
-        contact
+        number
       },
     ]))
 
     setNewName('')
-    setContact('')
+    setNumber('')
   }
 
   let filteredPeople = persons
   if(filter.trim()) {
     filteredPeople = persons.filter(({ name }) => 
-      name.toLocaleLowerCase().includes(filter)
+      name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
     )
   }
+
+  useEffect(() => {
+    axios.get('http://localhost:3001/persons')
+      .then(({ data }) => {
+        setPersons(data)
+      })
+  }, [])
 
   return (
     <div>
@@ -54,10 +57,10 @@ const App = () => {
       <h3>Add a new</h3>
       <PersonForm 
         name={newName}
-        contact={contact}
+        number={number}
         onSubmit={handleSubmit}
         onNameChange={handleChange(setNewName)}
-        onContactChange={handleChange(setContact)}
+        onNumberChange={handleChange(setNumber)}
       />
       <h3>Numbers</h3>
       <Persons data={filteredPeople} />
@@ -67,9 +70,9 @@ const App = () => {
 
 const PersonForm = ({ 
   name, 
-  contact, 
+  number, 
   onNameChange, 
-  onContactChange, 
+  onNumberChange, 
   onSubmit 
 }) => (
   <>
@@ -80,7 +83,7 @@ const PersonForm = ({
       </div>
       <div>
         number:
-        <input value={contact} onChange={onContactChange} />
+        <input value={number} onChange={onNumberChange} />
       </div>
       <div>
         <button type="submit">add</button>
@@ -99,9 +102,9 @@ const Filter = ({ text, filter, onChange }) => (
 );
 
 const Persons = ({ data }) => (
-  data.map(({ name, contact }, idx) => (
+  data.map(({ name, number }, idx) => (
     <p key={name + idx}>
-      {name} {contact}
+      {name} {number}
     </p>
 )));
 
