@@ -46,32 +46,63 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        Search by name:
-        <input value={filter} onChange={handleChange(setFilter)} />
-      </div>
+      <Filter 
+        text='name'
+        filter={filter}
+        onChange={handleChange(setFilter)}
+      />
       <h3>Add a new</h3>
-      <form onSubmit={handleSubmit}>
-        <div>
-          name:
-          <input value={newName} onChange={handleChange(setNewName)} />
-        </div>
-        <div>
-          number:
-          <input value={contact} onChange={handleChange(setContact)} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm 
+        name={newName}
+        contact={contact}
+        onSubmit={handleSubmit}
+        onNameChange={handleChange(setNewName)}
+        onContactChange={handleChange(setContact)}
+      />
       <h3>Numbers</h3>
-      {filteredPeople.map(({ name, contact }, idx) => (
-        <p key={name + idx}>
-          {name} {contact}
-        </p>
-      ))}
+      <Persons data={filteredPeople} />
     </div>
   );
 };
+
+const PersonForm = ({ 
+  name, 
+  contact, 
+  onNameChange, 
+  onContactChange, 
+  onSubmit 
+}) => (
+  <>
+    <form onSubmit={onSubmit}>
+      <div>
+        name:
+        <input value={name} onChange={onNameChange} />
+      </div>
+      <div>
+        number:
+        <input value={contact} onChange={onContactChange} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  </>
+);
+
+const Filter = ({ text, filter, onChange }) => (
+  <>
+    <div>
+      Search by {text}:
+      <input value={filter} onChange={onChange} />
+    </div>
+  </>
+);
+
+const Persons = ({ data }) => (
+  data.map(({ name, contact }, idx) => (
+    <p key={name + idx}>
+      {name} {contact}
+    </p>
+)));
 
 export default App;
