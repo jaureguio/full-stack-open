@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+
+import phonebookService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -7,8 +8,21 @@ const App = () => {
   const [number, setNumber] = useState("");
   const [filter, setFilter] = useState("");
 
-  const handleChange = (setState) => (event) => setState(event.target.value)
+  const handleChange = (setState) =>
+    (event) =>
+      setState(event.target.value)
   
+  const handleDelete = ({ name, id: idToDelete }) => {
+    const isConfirmed = window.confirm(`Delete ${name}?`)
+    
+    if(!isConfirmed) return
+
+    phonebookService
+      .deleteOne(idToDelete)
+      .then(() => 
+        setPersons(persons.filter(({ id }) => id !== idToDelete)))
+  }
+
   const handleSubmit = event => {
     event.preventDefault()
 
@@ -20,16 +34,24 @@ const App = () => {
       return alert(`${newName} is already added to phonebook`)
     }
 
-    setPersons(persons => ([
-      ...persons,
-      { 
+    phonebookService
+      .createOne({
         name: newName,
         number
-      },
-    ]))
-
-    setNewName('')
-    setNumber('')
+      })
+      .then(({ name, number, id }) => {
+        setPersons(persons => ([
+          ...persons,
+          { 
+            name,
+            number,
+            id
+          },
+        ]))
+    
+        setNewName('')
+        setNumber('')
+      })
   }
 
   let filteredPeople = persons
@@ -40,8 +62,9 @@ const App = () => {
   }
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-      .then(({ data }) => {
+    phonebookService
+      .getAll()
+      .then(data => {
         setPersons(data)
       })
   }, [])
@@ -63,7 +86,10 @@ const App = () => {
         onNumberChange={handleChange(setNumber)}
       />
       <h3>Numbers</h3>
-      <Persons data={filteredPeople} />
+      <Persons 
+        data={filteredPeople} 
+        onDelete={handleDelete}
+      />
     </div>
   );
 };
@@ -101,11 +127,18 @@ const Filter = ({ text, filter, onChange }) => (
   </>
 );
 
-const Persons = ({ data }) => (
-  data.map(({ name, number }, idx) => (
-    <p key={name + idx}>
-      {name} {number}
-    </p>
+const Persons = ({ data, onDelete }) => (
+  data.map(({ name, number, id }) => (
+     <>
+      <p key={name + id}>
+        {`${name} ${number} `}
+        <button 
+          onClick={() => onDelete({ name, id })}
+        >
+          delete
+        </button>
+      </p>
+    </>
 )));
 
 export default App;
