@@ -1,34 +1,77 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-const App = (props) => {
+const App = ({ anecdotes }) => {
   const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(Array(6).fill(0))
+  const [mostVoted, setMostVoted] = useState()
+
+  const handleVote = () => setVotes(incrementVotes)
+
+  const handleAnecdote = () =>
+    setSelected(Math.floor(Math.random() * anecdotes.length))
 
   const incrementVotes = (oldVotes) => {
     const newVotes = [...oldVotes]
     newVotes[selected] += 1
+
+    if (selected !== mostVoted) {
+      console.log(newVotes)
+      setMostVoted(maxValueIndex(newVotes))
+    }
+
     return newVotes
   }
-
-  const handleVote = () => 
-    setVotes(incrementVotes)
-  
-  const handleAnecdote = () => 
-    setSelected(Math.floor(Math.random()*anecdotes.length))
   
   return (
     <div>
-      <p>{props.anecdotes[selected]}</p>
-      <p>has {votes[selected]} votes</p>
+      <AnecdoteView 
+        title='Anecdote of the day'
+        anecdote={anecdotes[selected]}
+        votes={votes[selected]}
+      />
       <button onClick={handleVote}>
         vote
       </button>
       <button onClick={handleAnecdote}>
         next anecdote
       </button>
+      {mostVoted !== undefined ? (
+        <AnecdoteView
+          title='Anecdote with most votes'
+          anecdote={anecdotes[mostVoted]}
+          votes={votes[mostVoted]}
+        />
+      ) : (
+        <h2>Vote for some anecdote!</h2>
+      )}
     </div>
   )
+}
+
+const AnecdoteView = ({ title, anecdote, votes }) => {
+  return (
+    <>
+      <h2>{title}</h2>
+      <p>{anecdote}</p>
+      <p>has {votes} votes</p>
+    </>
+  )
+}
+
+const maxValueIndex = (arr) => {
+  const max = arr.reduce((acc, nextVal, idx) => {
+    if (nextVal > acc.val) {
+      acc.val = nextVal
+      acc.idx = idx
+    }
+    return acc
+  }, {
+    val: 0,
+    idx: undefined,
+  })
+
+  return max.idx
 }
 
 const anecdotes = [
