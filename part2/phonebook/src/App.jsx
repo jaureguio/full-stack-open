@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 
 import phonebookService from './services/phonebook'
 
@@ -21,17 +21,45 @@ const App = () => {
       .deleteOne(idToDelete)
       .then(() => 
         setPersons(persons.filter(({ id }) => id !== idToDelete)))
+      .catch(error => {
+        if(error.message.includes('404')) {
+          setPersons(persons.filter(({ id }) => id !== idToDelete))
+          return window.alert(`${name} was already deleted :)`)
+        }
+        if(error.message.includes('Error')) {
+          console.error(`Unable to delete contact: ${error}`)
+          return window.alert(`Something went wrong, try refreshing the page :(`)
+        }
+      })
   }
 
   const handleSubmit = event => {
     event.preventDefault()
 
-    const isAdded = persons.some(({ name }) => name === newName)
+    const addedPerson = persons.find(({ name }) => name === newName)
 
     if(!newName.trim()) return
     
-    if(isAdded) {
-      return alert(`${newName} is already added to phonebook`)
+    if(addedPerson) {
+      const confirmUpdate = window.confirm(`${addedPerson.name} is already added to phonebook, replace the old number with a new one?`)
+      
+      if(!confirmUpdate) return
+
+      return phonebookService
+        .updateOne(
+          addedPerson.id, 
+          { 
+            ...addedPerson,
+            number
+          }
+        )
+        .then(updatedPerson => {
+          const newPersons = [...persons]
+          const personRef = newPersons.find(({ id }) => id === updatedPerson.id)
+          personRef.number = number
+          
+          setPersons(newPersons)
+        })
     }
 
     phonebookService
@@ -129,8 +157,8 @@ const Filter = ({ text, filter, onChange }) => (
 
 const Persons = ({ data, onDelete }) => (
   data.map(({ name, number, id }) => (
-     <>
-      <p key={name + id}>
+     <Fragment key={name+id} >
+      <p>
         {`${name} ${number} `}
         <button 
           onClick={() => onDelete({ name, id })}
@@ -138,7 +166,7 @@ const Persons = ({ data, onDelete }) => (
           delete
         </button>
       </p>
-    </>
+    </Fragment>
 )));
 
 export default App;

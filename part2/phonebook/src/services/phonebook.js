@@ -11,9 +11,9 @@ const createOne = newData =>
     .post(DBURL, newData)
     .then(({ data }) => data)
 
-const updateOne = id => 
+const updateOne = (id, newData) => 
   axios
-    .put(`${DBURL}/${id}`)
+    .put(`${DBURL}/${id}`, newData)
     .then(({ data }) => data)
 
 const deleteOne = id => 
