@@ -1,4 +1,8 @@
-import React, { useState, useEffect, Fragment } from "react"
+import React, { useState, useEffect } from "react"
+import PersonForm from './components/PersonForm'
+import People from './components/People'
+import Filter from './components/Filter'
+import Notification from './components/Notification'
 
 import peopleService from './services/people'
 
@@ -137,69 +141,10 @@ const App = () => {
         onNumberChange={handleChange(setNumber)}
       />
       <h3>Numbers</h3>
-      <Persons 
+      <People 
         data={filteredPeople} 
         onDelete={handleDelete}
       />
-    </div>
-  )
-}
-
-const PersonForm = ({ 
-  name, 
-  number, 
-  onNameChange, 
-  onNumberChange, 
-  onSubmit 
-}) => (
-  <>
-    <form onSubmit={onSubmit}>
-      <div>
-        name:
-        <input value={name} onChange={onNameChange} />
-      </div>
-      <div>
-        number:
-        <input value={number} onChange={onNumberChange} />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  </>
-)
-
-const Filter = ({ text, filter, onChange }) => (
-  <>
-    <div>
-      Search by {text}:
-      <input value={filter} onChange={onChange} />
-    </div>
-  </>
-)
-
-const Persons = ({ data, onDelete }) => (
-  data.map(({ name, number, id }) => (
-     <Fragment key={name+id} >
-      <p>
-        {`${name} ${number} `}
-        <button 
-          onClick={() => onDelete({ name, id })}
-        >
-          delete
-        </button>
-      </p>
-    </Fragment>
-)))
-
-const Notification = ({ notification }) => {
-  if(!notification) return null
-
-  const { content, type } = notification
-
-  return (
-    <div className={type}>
-      {content}
     </div>
   )
 }
