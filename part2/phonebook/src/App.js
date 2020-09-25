@@ -1,34 +1,50 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react"
 
-import phonebookService from './services/phonebook'
+import peopleService from './services/people'
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [number, setNumber] = useState("");
-  const [filter, setFilter] = useState("");
+  const [people, setPeople] = useState([])
+  const [newName, setNewName] = useState("")
+  const [number, setNumber] = useState("")
+  const [filter, setFilter] = useState("")
+  const [notification, setNotification] = useState(null)
 
   const handleChange = (setState) =>
     (event) =>
       setState(event.target.value)
   
+  const showNotification = (content, type = 'success') => {
+    setNotification({
+      content,
+      type
+    })
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000)
+  }
+
   const handleDelete = ({ name, id: idToDelete }) => {
     const isConfirmed = window.confirm(`Delete ${name}?`)
     
     if(!isConfirmed) return
 
-    phonebookService
+    peopleService
       .deleteOne(idToDelete)
-      .then(() => 
-        setPersons(persons.filter(({ id }) => id !== idToDelete)))
+      .then(() => {
+        setPeople(people.filter(({ id }) => id !== idToDelete))
+
+        showNotification('Contact succesfully deleted', 'success')
+      })
       .catch(error => {
         if(error.message.includes('404')) {
-          setPersons(persons.filter(({ id }) => id !== idToDelete))
-          return window.alert(`${name} was already deleted :)`)
+          setPeople(people.filter(({ id }) => id !== idToDelete))
+          showNotification(`Information of ${name} has already been removed from server`, 'error')
+          return 
         }
         if(error.message.includes('Error')) {
           console.error(`Unable to delete contact: ${error}`)
-          return window.alert(`Something went wrong, try refreshing the page :(`)
+          showNotification(`Something went wrong, try refreshing the page :(`, 'error')
+          return 
         }
       })
   }
@@ -36,7 +52,7 @@ const App = () => {
   const handleSubmit = event => {
     event.preventDefault()
 
-    const addedPerson = persons.find(({ name }) => name === newName)
+    const addedPerson = people.find(({ name }) => name === newName)
 
     if(!newName.trim()) return
     
@@ -45,7 +61,7 @@ const App = () => {
       
       if(!confirmUpdate) return
 
-      return phonebookService
+      return peopleService
         .updateOne(
           addedPerson.id, 
           { 
@@ -54,22 +70,26 @@ const App = () => {
           }
         )
         .then(updatedPerson => {
-          const newPersons = [...persons]
-          const personRef = newPersons.find(({ id }) => id === updatedPerson.id)
+          const newPeople = [...people]
+          const personRef = newPeople.find(({ id }) => id === updatedPerson.id)
           personRef.number = number
           
-          setPersons(newPersons)
+          setPeople(newPeople)
+
+          setNewName("");
+          setNumber("");
+          showNotification(`Updated ${updatedPerson.name}`, 'success')
         })
     }
 
-    phonebookService
+    peopleService
       .createOne({
         name: newName,
         number
       })
       .then(({ name, number, id }) => {
-        setPersons(persons => ([
-          ...persons,
+        setPeople(people => ([
+          ...people,
           { 
             name,
             number,
@@ -79,27 +99,30 @@ const App = () => {
     
         setNewName('')
         setNumber('')
+        showNotification(`Added ${name}`, 'success');
       })
   }
 
-  let filteredPeople = persons
+  let filteredPeople = people
+
   if(filter.trim()) {
-    filteredPeople = persons.filter(({ name }) => 
+    filteredPeople = people.filter(({ name }) => 
       name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
     )
   }
 
   useEffect(() => {
-    phonebookService
+    peopleService
       .getAll()
       .then(data => {
-        setPersons(data)
+        setPeople(data)
       })
   }, [])
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notification={notification} />
       <Filter 
         text='name'
         filter={filter}
@@ -119,8 +142,8 @@ const App = () => {
         onDelete={handleDelete}
       />
     </div>
-  );
-};
+  )
+}
 
 const PersonForm = ({ 
   name, 
@@ -144,7 +167,7 @@ const PersonForm = ({
       </div>
     </form>
   </>
-);
+)
 
 const Filter = ({ text, filter, onChange }) => (
   <>
@@ -153,7 +176,7 @@ const Filter = ({ text, filter, onChange }) => (
       <input value={filter} onChange={onChange} />
     </div>
   </>
-);
+)
 
 const Persons = ({ data, onDelete }) => (
   data.map(({ name, number, id }) => (
@@ -167,6 +190,18 @@ const Persons = ({ data, onDelete }) => (
         </button>
       </p>
     </Fragment>
-)));
+)))
 
-export default App;
+const Notification = ({ notification }) => {
+  if(!notification) return null
+
+  const { content, type } = notification
+
+  return (
+    <div className={type}>
+      {content}
+    </div>
+  )
+}
+
+export default App

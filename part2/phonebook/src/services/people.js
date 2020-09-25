@@ -1,5 +1,5 @@
 import axios from 'axios'
-const DBURL = 'http://localhost:3001/persons'
+const DBURL = 'http://localhost:3001/people'
 
 const getAll = () => 
   axios

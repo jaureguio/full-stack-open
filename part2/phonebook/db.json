@@ -1,5 +1,5 @@
 {
-  "persons": [
+  "people": [
     {
       "name": "Dan Abramov",
       "number": "567056-5675",
@@ -16,9 +16,14 @@
       "id": 6
     },
     {
-      "name": "Oscar",
-      "number": "1234",
+      "name": "Oscar Jauregui",
+      "number": "2345-234523",
       "id": 7
+    },
+    {
+      "name": "Katiuska",
+      "number": "90345-2345",
+      "id": 8
     }
   ]
 }
