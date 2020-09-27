@@ -57,8 +57,6 @@ const App = () => {
     event.preventDefault()
 
     const addedPerson = people.find(({ name }) => name === newName)
-
-    if(!newName.trim()) return
     
     if(addedPerson) {
       const confirmUpdate = window.confirm(`${addedPerson.name} is already added to phonebook, replace the old number with a new one?`)
