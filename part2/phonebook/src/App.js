@@ -40,7 +40,7 @@ const App = () => {
         showNotification('Contact succesfully deleted', 'success')
       })
       .catch(error => {
-        if(error.message.includes('404')) {
+        if(error.response.status === '404') {
           setPeople(people.filter(({ id }) => id !== idToDelete))
           showNotification(`Information of ${name} has already been removed from server`, 'error')
           return 
@@ -84,27 +84,33 @@ const App = () => {
           setNumber("");
           showNotification(`Updated ${updatedPerson.name}`, 'success')
         })
+        .catch(error => {
+          showNotification(error.response.data.error, 'error')
+        })
     }
 
     peopleService
       .createOne({
         name: newName,
-        number
+        number,
       })
       .then(({ name, number, id }) => {
-        setPeople(people => ([
+        setPeople((people) => [
           ...people,
-          { 
+          {
             name,
             number,
-            id
+            id,
           },
-        ]))
-    
-        setNewName('')
-        setNumber('')
-        showNotification(`Added ${name}`, 'success');
+        ]);
+
+        setNewName("");
+        setNumber("");
+        showNotification(`Added ${name}`, "success");
       })
+      .catch(error => {
+        showNotification(error.response.data.error, "error");
+      });
   }
 
   let filteredPeople = people
