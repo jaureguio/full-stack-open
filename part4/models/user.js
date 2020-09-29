@@ -5,34 +5,39 @@ const { config } = utils
 
 mongoose.connect(config.MONGODB_URI, {
   useNewUrlParser: true,
+  useCreateIndex: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
-  useCreateIndex: true,
 })
 
-const blogSchema = new mongoose.Schema({
-  title: {
+const userSchema = mongoose.Schema({
+  username: {
+    type: String,
+    minlength: 3,
+    required: true,
+    unique: true,
+  },
+  passwordHash: {
     type: String,
     required: true,
   },
-  author: String,
-  url: {
+  name: {
     type: String,
     required: true,
   },
-  likes: Number,
-  user: {
+  blogs: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }
+    ref: 'Blog'
+  }]
 })
 
-blogSchema.set('toJSON', {
-  transform:(_, returnedObj) => {
+userSchema.set('toJSON', {
+  transform: (_, returnedObj) => {
     returnedObj.id = returnedObj._id.toString()
     delete returnedObj._id
     delete returnedObj.__v
+    delete returnedObj.passwordHash
   }
 })
 
-module.exports = mongoose.model('Blog', blogSchema)
+module.exports = mongoose.model('User', userSchema)

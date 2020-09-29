@@ -6,6 +6,7 @@ const morgan = require('morgan')
 
 const utils = require('./utils')
 const blogsRouter = require('./controllers/blogs')
+const userRouter = require('./controllers/user')
 
 const { middleware } = utils
 
@@ -24,6 +25,7 @@ app
     ':method :url :status :res[content-length] - :response-time ms :body'
   ))
   .use('/api/blogs', blogsRouter)
+  .use('/api/users', userRouter)
   .use(unknowEndpoint)
   .use(errorHandler)
 

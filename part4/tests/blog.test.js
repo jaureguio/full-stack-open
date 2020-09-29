@@ -27,6 +27,10 @@ describe('when there are some initial blogs saved', () => {
     expect(blogs[2].id).toBeDefined()
   })
 
+  test.skip('a blog list entry displays info about authoring user', async () => {
+    // TODO
+  })
+
   test('blog list gets incremented when a new entry is submitted', async () => {
     const blogsAtStart = await getBlogList()
 

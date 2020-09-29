@@ -59,6 +59,27 @@ const mostLikes = (blogs) => {
     }, { author: '', likes: 0 })
 }
 
+// const copyObj = (obj) => {
+//   const newObj = {}
+//   for(let prop in obj) {
+//     newObj[prop] = obj[prop]
+//   }
+//   return newObj
+// }
+
+// const deepEquality = (arr, copy = []) => {
+//   if(arr.length === 0) return copy
+
+//   const [item, ...rest] = arr
+
+//   if(Array.isArray(item)) return deepEquality(item, copy)
+
+//   if(item && typeof item === 'object') {
+//     copy.push(copyObj(item))
+//   }
+//   return 
+// }
+
 module.exports = {
   dummy,
   totalLikes,
