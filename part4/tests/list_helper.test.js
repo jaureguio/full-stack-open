@@ -1,13 +1,13 @@
 const utils = require('../utils')
 
-const { listHelper } = utils
+const { helpers } = utils
 const {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
   mostLikes,
-} = listHelper
+} = helpers
 
 const emptyBlogList = []
 

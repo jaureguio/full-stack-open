@@ -3,12 +3,12 @@ const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./test_helper')
 
-const { initializeUsers, getUserList } = helper
+const { initializeDB, getUserList, dummyUser } = helper
 
 const api = supertest(app)
 
 beforeEach(async () => {
-  await initializeUsers
+  await initializeDB()
 })
 
 afterAll(() => {
@@ -16,21 +16,24 @@ afterAll(() => {
 })
 
 describe('when there are users registered', () => {
+  test('registered users displays info about all its blogs', async () => {
+    const { body: users } =
+      await api
+        .get('/api/users')
+        .expect('Content-Type', /application\/json/)
+        .expect(200)
 
-  test.skip('a user entry displays info about all its blogs', async () => {
-    // TODO
+    const { blogs } = users[0]
+
+    expect(blogs[0].title).toBeDefined()
+    expect(blogs[0].author).toBeDefined()
+    expect(blogs[0].url).toBeDefined()
   })
 })
 
 describe('when adding a new user', () => {
   test('succeeds when valid username and password are provided', async () => {
     const usersAtStart = await getUserList()
-
-    const dummyUser = {
-      name: 'Esteban Agostini',
-      username: 'estaban1',
-      password: 'esteban1234'
-    }
 
     await api
       .post('/api/users')
@@ -44,15 +47,34 @@ describe('when adding a new user', () => {
     expect(usersNames).toContain(dummyUser.name)
   })
 
-  test('fails eith statuscode 400 when no username or password are provided', async () => {
+  test('fails with statuscode 400 when no username or password are provided', async () => {
+    const usersAtStart = await getUserList()
 
-  })
+    const invalidUserNoUsername = {
+      name: 'Beatriz Guaita',
+      password: 'bea12345'
+    }
+    const invalidUserNoPass = {
+      name: 'Beatriz Guaita',
+      username: 'beatricita',
+    }
 
-  test('fails with statuscode 400 when username or password are shorter than 3 characters long', async () => {
+    const { body: invalidUsername } =
+      await api
+        .post('/api/users')
+        .send(invalidUserNoUsername)
+        .expect(400)
 
-  })
+    const { body: invalidPass } =
+      await api
+        .post('/api/users')
+        .send(invalidUserNoPass)
+        .expect(400)
 
-  test('when a new blog is added it references any registered user', async () => {
+    const usersAtEnd = await getUserList()
 
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    expect(invalidUsername.error.toLowerCase()).toContain('username')
+    expect(invalidPass.error.toLowerCase()).toContain('invalid password')
   })
 })

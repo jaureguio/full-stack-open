@@ -59,6 +59,14 @@ const mostLikes = (blogs) => {
     }, { author: '', likes: 0 })
 }
 
+const getTokenFromHeader = (request) => {
+  const authHeader = request.get('authorization')
+  if(authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.substring(7)
+  }
+  return null
+}
+
 // const copyObj = (obj) => {
 //   const newObj = {}
 //   for(let prop in obj) {
@@ -77,7 +85,7 @@ const mostLikes = (blogs) => {
 //   if(item && typeof item === 'object') {
 //     copy.push(copyObj(item))
 //   }
-//   return 
+//   return
 // }
 
 module.exports = {
@@ -85,5 +93,6 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
-  mostLikes
+  mostLikes,
+  getTokenFromHeader,
 }

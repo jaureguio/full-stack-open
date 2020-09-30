@@ -10,7 +10,7 @@ const userRouter = require('./controllers/user')
 
 const { middleware } = utils
 
-const { unknowEndpoint, errorHandler } = middleware
+const { tokenExtractor, unknowEndpoint, errorHandler } = middleware
 
 morgan.token('body', (req) => {
   if(req.method !== 'POST') return null
@@ -24,6 +24,7 @@ app
   .use(morgan(
     ':method :url :status :res[content-length] - :response-time ms :body'
   ))
+  .use(tokenExtractor)
   .use('/api/blogs', blogsRouter)
   .use('/api/users', userRouter)
   .use(unknowEndpoint)
