@@ -22,3 +22,11 @@ This part introduces modern JavaScript features used with React, and the UI libr
 ## [Part 2](https://fullstackopen.com/en/part2)
 
 [Go to solutions](./part2)
+
+## [Part 3](https://fullstackopen.com/en/part3)
+
+[Go to solutions](https://github.com/jaureguio/full-stack-open-part3)
+
+## [Part 4](https://fullstackopen.com/en/part4)
+
+[Go to solutions](./part4)
