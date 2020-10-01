@@ -30,3 +30,7 @@ This part introduces modern JavaScript features used with React, and the UI libr
 ## [Part 4](https://fullstackopen.com/en/part4)
 
 [Go to solutions](./part4)
+
+## [Part 5](https://fullstackopen.com/en/part5)
+
+[Go to solutions](./part5)
