@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 
-const BlogForm = ({ addBlog }) => {
+const BlogForm = ({ setVisibility, addBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-
   const handleBlogSubmit = async (event) => {
     event.preventDefault()
 
@@ -14,7 +13,8 @@ const BlogForm = ({ addBlog }) => {
       url,
     }
     
-    addBlog(blogData)
+    await addBlog(blogData)
+    setVisibility(false)
   }
 
   return (

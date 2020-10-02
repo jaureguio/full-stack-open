@@ -12,7 +12,6 @@ router.get('/', async (request, response) => {
 
 router.delete('/:id', async (request, response) => {
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
-
   if (!request.token || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
@@ -31,9 +30,11 @@ router.delete('/:id', async (request, response) => {
 
 router.put('/:id', async (request, response) => {
   const blog = request.body
-
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-  response.json(updatedBlog.toJSON())
+  blog.user = blog.user.id
+  const updatedBlog = await (await Blog.findByIdAndUpdate(request.params.id, blog, { new: true }))
+    .populate('user', { username: 1, name: 1 })
+    .execPopulate()
+  response.json(updatedBlog)
 })
 
 router.post('/', async (request, response) => {

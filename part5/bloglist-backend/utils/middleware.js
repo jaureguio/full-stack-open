@@ -34,7 +34,7 @@ const tokenExtractor = (request, response, next) => {
 
 const requestsLogger = () => {
   morgan.token('body', (req) => {
-    if(req.method !== 'POST') return null
+    if(req.method !== 'POST' || req.method !== 'PUT') return null
     return `${JSON.stringify(req.body)}`
   })
 
