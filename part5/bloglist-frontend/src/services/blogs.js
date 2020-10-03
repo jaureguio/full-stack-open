@@ -28,7 +28,7 @@ const updateOne = async ( blogData ) => {
 
 const deleteOne = async ( blogId ) => {
   await axios
-    .delete(`${blogsUrl}/${blogId}`, { headers: { Authorization: `Bearer ${token}`}})
+    .delete(`${blogsUrl}/${blogId}`, { headers: { Authorization: `Bearer ${token}` } })
 }
 
 export default { setToken, getAll, createOne, updateOne, deleteOne }

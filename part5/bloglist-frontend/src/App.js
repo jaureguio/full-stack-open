@@ -6,29 +6,29 @@ import Blogs from './components/Blogs'
 import loginService from './services/login'
 
 const App = () => {
-  const [user, setUser] = useState(() => JSON.parse(window.localStorage.getItem('bloglist-user')))
-  const [notification, setNotification] = useState('')
+  const [ user, setUser ] = useState(() => JSON.parse(window.localStorage.getItem( 'bloglist-user' )))
+  const [ notification, setNotification ] = useState( '' )
 
-  const notify = (content, type = 'success') => {
+  const notify = ( content, type = 'success' ) => {
     setNotification({ content, type })
     setTimeout(() => {
       setNotification('')
     }, 3000)
   }
-  
-  const login = async (credentials) => {
+
+  const login = async ( credentials ) => {
     const { username, password } = credentials
 
     const response = await loginService
       .login({ username, password })
-    
+
     if(!response.error) {
       setUser(response)
       notify(`Welcome ${response.name.split(' ')[0]}`)
       window.localStorage.setItem('bloglist-user', JSON.stringify(response))
     } else {
-      notify(`Incorrect username or password`, 'error')
-    }    
+      notify('Incorrect username or password', 'error')
+    }
   }
 
   const logout = () => {

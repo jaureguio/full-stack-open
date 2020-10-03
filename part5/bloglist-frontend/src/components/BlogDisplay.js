@@ -15,8 +15,8 @@ const BlogDisplay = ({ idx, blog, publisher, updateBlog, deleteBlog }) => {
       { blog.url } <br/>
       { blog.likes } <button onClick={ () => handleUpdate({ likes: blog.likes + 1 }) }>like</button><br/>
       { blog.user.name } <br/>
-      { publisher === blog.user.username && 
-        <button 
+      { publisher === blog.user.username &&
+        <button
           style={{
             backgroundColor: 'red',
           }}
@@ -31,7 +31,7 @@ const BlogDisplay = ({ idx, blog, publisher, updateBlog, deleteBlog }) => {
       ...updates
     }, idx)
   }
-  
+
   const handleDelete = async () => {
     const isConfirmed = window.confirm(`Removing "${blog.title}" by ${blog.author}`)
     if(!isConfirmed) return
@@ -40,7 +40,7 @@ const BlogDisplay = ({ idx, blog, publisher, updateBlog, deleteBlog }) => {
 
   return (
     <div style={ blogStyle }>
-      { blog.title } by { blog.author } 
+      { blog.title } by { blog.author }
       <button onClick={ () => setVisibility(!visibility) }>{ visibility ? 'hide' : 'show' }</button><br/>
       { visibility && blogComplete() }
     </div>

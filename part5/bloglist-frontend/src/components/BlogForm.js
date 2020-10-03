@@ -12,7 +12,7 @@ const BlogForm = ({ setVisibility, addBlog }) => {
       author,
       url,
     }
-    
+
     await addBlog(blogData)
     setVisibility(false)
   }
@@ -23,7 +23,7 @@ const BlogForm = ({ setVisibility, addBlog }) => {
       <form onSubmit={handleBlogSubmit}>
         <div>
           <label htmlFor='title'>title</label>
-          <input 
+          <input
             type='text'
             id='title'
             value={title}
@@ -32,7 +32,7 @@ const BlogForm = ({ setVisibility, addBlog }) => {
         </div>
         <div>
           <label htmlFor='author'>author</label>
-          <input 
+          <input
             type='text'
             id='author'
             value={author}
@@ -41,7 +41,7 @@ const BlogForm = ({ setVisibility, addBlog }) => {
         </div>
         <div>
           <label htmlFor='url'>url</label>
-          <input 
+          <input
             type='text'
             id='url'
             value={url}

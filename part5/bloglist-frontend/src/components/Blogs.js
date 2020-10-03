@@ -4,7 +4,6 @@ import BlogDisplay from './BlogDisplay'
 import Togglable from './Togglable'
 import blogService from '../services/blogs'
 
-
 const Blogs = ({ user, notify }) => {
   const [ blogs, setBlogs ] = useState([])
 
@@ -12,7 +11,7 @@ const Blogs = ({ user, notify }) => {
     blogService.setToken( user.token )
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [ user.token ])
 
 
@@ -28,12 +27,12 @@ const Blogs = ({ user, notify }) => {
     const newBlog = await blogService
       .updateOne( newData )
 
-   const updatedBlogs = blogs.map(( blog ) => {
-     if( blog.id !== newBlog.id ) return blog
-     return newBlog
-   })
+    const updatedBlogs = blogs.map(( blog ) => {
+      if( blog.id !== newBlog.id ) return blog
+      return newBlog
+    })
     setBlogs( updatedBlogs )
-    notify( `Blog updated successfully` )
+    notify( 'Blog updated successfully' )
   }
 
   const deleteBlog = async ( blogId ) => {
@@ -42,9 +41,9 @@ const Blogs = ({ user, notify }) => {
 
     const updatedBlogs = blogs.filter(({ id }) => blogId !== id)
     setBlogs( updatedBlogs )
-    notify( `Blog deleted successfully` )    
+    notify( 'Blog deleted successfully' )
   }
-  
+
   const sortedBlogs = [...blogs].sort(( blogA, blogB ) => blogB.likes - blogA.likes )
 
   return (
@@ -52,14 +51,14 @@ const Blogs = ({ user, notify }) => {
       <h2>blogs</h2>
       <Togglable buttonText='New note'>
         {({ setVisibility }) => (
-          <BlogForm 
-            setVisibility={setVisibility} 
-            addBlog={ addBlog } 
+          <BlogForm
+            setVisibility={setVisibility}
+            addBlog={ addBlog }
           />
         )}
       </Togglable>
       {sortedBlogs.map((blog, idx) =>
-        <BlogDisplay 
+        <BlogDisplay
           key={ blog.id }
           idx={idx}
           blog={ blog }

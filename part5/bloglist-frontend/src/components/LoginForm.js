@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 const LoginForm = ({ onLogin }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -16,7 +16,7 @@ const LoginForm = ({ onLogin }) => {
       <form onSubmit={handleLogin}>
         <div>
           <label htmlFor='username'>username</label>
-          <input 
+          <input
             type='text'
             id='username'
             value={username}
@@ -25,7 +25,7 @@ const LoginForm = ({ onLogin }) => {
         </div>
         <div>
           <label htmlFor='password'>password</label>
-          <input 
+          <input
             type='password'
             id='password'
             value={password}

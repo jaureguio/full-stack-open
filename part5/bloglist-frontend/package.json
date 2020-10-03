@@ -7,19 +7,21 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.20.0",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.3"
+  },
+  "devDependencies": {
+    "eslint-plugin-jest": "^24.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "json-server --port 3001 --watch db.json"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "server": "json-server --port 3001 --watch db.json",
+    "lint": "eslint ."
   },
   "proxy": "http://localhost:3001",
   "browserslist": {
@@ -33,6 +35,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {}
+  }
 }
