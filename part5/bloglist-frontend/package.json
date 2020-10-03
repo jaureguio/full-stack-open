@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.20.0",
@@ -13,12 +12,16 @@
     "react-scripts": "3.4.3"
   },
   "devDependencies": {
+    "@testing-library/dom": "^7.24.3",
+    "@testing-library/jest-dom": "^4.2.4",
+    "cross-env": "^7.0.2",
     "eslint-plugin-jest": "^24.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "cross-env CI=true react-scripts test --runInBand",
+    "test:watch": "react-scripts test --runInBand",
     "eject": "react-scripts eject",
     "server": "json-server --port 3001 --watch db.json",
     "lint": "eslint ."

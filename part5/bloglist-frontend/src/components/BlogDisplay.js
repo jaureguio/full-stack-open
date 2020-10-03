@@ -1,6 +1,11 @@
 import React, { useState } from 'react'
 
-const BlogDisplay = ({ idx, blog, publisher, updateBlog, deleteBlog }) => {
+const BlogDisplay = ({
+  blog,
+  publisher,
+  updateBlog,
+  deleteBlog
+}) => {
   const [visibility, setVisibility] = useState( false )
   const blogStyle = {
     paddingTop: 10,
@@ -11,7 +16,7 @@ const BlogDisplay = ({ idx, blog, publisher, updateBlog, deleteBlog }) => {
   }
 
   const blogComplete = () => (
-    <div>
+    <div data-testid='blog-complete'>
       { blog.url } <br/>
       { blog.likes } <button onClick={ () => handleUpdate({ likes: blog.likes + 1 }) }>like</button><br/>
       { blog.user.name } <br/>
@@ -29,7 +34,7 @@ const BlogDisplay = ({ idx, blog, publisher, updateBlog, deleteBlog }) => {
     await updateBlog({
       ...blog,
       ...updates
-    }, idx)
+    })
   }
 
   const handleDelete = async () => {

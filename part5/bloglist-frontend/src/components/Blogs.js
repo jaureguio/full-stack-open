@@ -57,10 +57,9 @@ const Blogs = ({ user, notify }) => {
           />
         )}
       </Togglable>
-      {sortedBlogs.map((blog, idx) =>
+      {sortedBlogs.map(( blog ) =>
         <BlogDisplay
           key={ blog.id }
-          idx={idx}
           blog={ blog }
           publisher={ user.username }
           updateBlog={ updateBlog }
