@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "5f78f6c1a5f0177fd94c8586",
+    "title": "React patterns",
+    "author": "Michael Chan",
+    "url": "https://reactpatterns.com/",
+    "likes": 7,
+    "user": "5f78f6c0a5f0177fd94c8585"
+  },
+  {
+    "_id": "5f78f6c1a5f0177fd94c8587",
+    "title": "Sports Statistics App",
+    "author": "Oscar Jauregui",
+    "url": "https://oscarincredibleapps.com/",
+    "likes": 700,
+    "user": "5f78f6c0a5f0177fd94c8583"
+  },
+  {
+    "_id": "5f78f6c1a5f0177fd94c8588",
+    "title": "Wonderful App",
+    "author": "Katiuska Guaita",
+    "url": "https://katyincredibleapps.com/",
+    "likes": 25,
+    "user": "5f78f6c0a5f0177fd94c8584"
+  }
+]
