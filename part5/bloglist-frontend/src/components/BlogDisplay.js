@@ -18,7 +18,9 @@ const BlogDisplay = ({
   const blogComplete = () => (
     <div data-testid='blog-complete'>
       { blog.url } <br/>
-      { blog.likes } <button onClick={ () => handleUpdate({ likes: blog.likes + 1 }) }>like</button><br/>
+      <span>
+        { blog.likes } <button onClick={ () => handleUpdate({ likes: blog.likes + 1 }) }>like</button><br/>
+      </span>
       { blog.user.name } <br/>
       { publisher === blog.user.username &&
         <button
