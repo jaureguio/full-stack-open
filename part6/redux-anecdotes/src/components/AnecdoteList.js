@@ -1,15 +1,26 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { incrementVotesOf } from '../reducers/anecdoteReducer'
+import { showNotification, removeNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector((state) => {
-    const orderedAnecdotes = [...state].sort((anecdoteA, anecdoteB) => anecdoteB.votes - anecdoteA.votes)
+  const anecdotes = useSelector(({ anecdotes, filterText }) => {
+    const filteredAnecdotes = [...anecdotes]
+      .filter(({ content }) => content.toLowerCase().includes(filterText))
+    const orderedAnecdotes = filteredAnecdotes
+      .sort((anecdoteA, anecdoteB) => anecdoteB.votes - anecdoteA.votes)
     return orderedAnecdotes
   })
   const dispatch = useDispatch()
 
-  const vote = (id) => dispatch(incrementVotesOf(id))
+  const vote = (id) => {
+    const votedAnecdote = findInArray(anecdotes, 'id', id)
+    dispatch(incrementVotesOf(id))
+    dispatch(showNotification(votedAnecdote.content))
+    setTimeout(() => {
+      dispatch(removeNotification())
+    }, 5000);
+  }
 
   return anecdotes.map(anecdote =>
     <div key={anecdote.id}>
@@ -23,5 +34,7 @@ const AnecdoteList = () => {
     </div>
   )
 }
+
+const findInArray = (arr, valName, val) => arr.find(item => item[valName] === val)
 
 export default AnecdoteList
