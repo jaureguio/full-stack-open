@@ -1,40 +1,39 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { incrementVotesOf } from '../reducers/anecdoteReducer'
-import { showNotification, removeNotification } from '../reducers/notificationReducer'
+import { initAnecdotes, incrementVotesOf } from '../reducers/anecdoteReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(({ anecdotes, filterText }) => {
+  const orderedAnecdotes = useSelector(({ anecdotes, filterText }) => {
     const filteredAnecdotes = [...anecdotes]
       .filter(({ content }) => content.toLowerCase().includes(filterText))
-    const orderedAnecdotes = filteredAnecdotes
+    return filteredAnecdotes
       .sort((anecdoteA, anecdoteB) => anecdoteB.votes - anecdoteA.votes)
-    return orderedAnecdotes
   })
   const dispatch = useDispatch()
 
-  const vote = (id) => {
-    const votedAnecdote = findInArray(anecdotes, 'id', id)
-    dispatch(incrementVotesOf(id))
-    dispatch(showNotification(votedAnecdote.content))
-    setTimeout(() => {
-      dispatch(removeNotification())
-    }, 5000);
+  const vote = (anecdote) => {
+    dispatch(incrementVotesOf(anecdote))
+    dispatch(setNotification(`You voted for "${anecdote.content}"`, 5))
   }
 
-  return anecdotes.map(anecdote =>
+  useEffect(() => {
+    dispatch(initAnecdotes())
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  return orderedAnecdotes.map(anecdote =>
     <div key={anecdote.id}>
       <div>
         {anecdote.content}
       </div>
       <div>
         has {anecdote.votes}
-        <button onClick={() => vote(anecdote.id)}>vote</button>
+        <button onClick={() => vote(anecdote)}>vote</button>
       </div>
     </div>
   )
 }
 
-const findInArray = (arr, valName, val) => arr.find(item => item[valName] === val)
+// const findInArray = (arr, valName, val) => arr.find(item => item[valName] === val)
 
 export default AnecdoteList
