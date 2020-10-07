@@ -9,9 +9,12 @@ const notificationReducer = (state = '', action) => {
   }
 }
 
+let notificationId
+
 export const setNotification = ( content, durationInSeconds ) => ( dispatch ) => {
+  if(notificationId) clearTimeout(notificationId)
   dispatch(showNotification(content))
-  setTimeout(() => {
+  notificationId = setTimeout(() => {
     dispatch(removeNotification())
   }, durationInSeconds*1000)
 }
