@@ -1,24 +1,27 @@
 import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 import { initAnecdotes, incrementVotesOf } from '../reducers/anecdoteReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
-const AnecdoteList = () => {
-  const orderedAnecdotes = useSelector(({ anecdotes, filterText }) => {
-    const filteredAnecdotes = [...anecdotes]
+const AnecdoteList = ({ 
+  anecdotes,
+  filterText,
+  initAnecdotes,
+  incrementVotesOf,
+  setNotification
+}) => {
+  const filteredAnecdotes = [...anecdotes]
       .filter(({ content }) => content.toLowerCase().includes(filterText))
-    return filteredAnecdotes
-      .sort((anecdoteA, anecdoteB) => anecdoteB.votes - anecdoteA.votes)
-  })
-  const dispatch = useDispatch()
+  const orderedAnecdotes = filteredAnecdotes
+    .sort((anecdoteA, anecdoteB) => anecdoteB.votes - anecdoteA.votes)
 
   const vote = (anecdote) => {
-    dispatch(incrementVotesOf(anecdote))
-    dispatch(setNotification(`You voted for "${anecdote.content}"`, 5))
+    incrementVotesOf(anecdote)
+    setNotification(`You voted for "${anecdote.content}"`, 5)
   }
 
   useEffect(() => {
-    dispatch(initAnecdotes())
+    initAnecdotes()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return orderedAnecdotes.map(anecdote =>
@@ -34,6 +37,14 @@ const AnecdoteList = () => {
   )
 }
 
-// const findInArray = (arr, valName, val) => arr.find(item => item[valName] === val)
+const mapStateToProps = (state) => {
+  const { anecdotes, filterText } = state
+  return { anecdotes, filterText }
+}
 
-export default AnecdoteList
+const mapDispatchToProps = {
+  initAnecdotes,
+  incrementVotesOf,
+  setNotification
+}
+export default connect(mapStateToProps, mapDispatchToProps)(AnecdoteList)
