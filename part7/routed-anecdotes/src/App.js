@@ -35,7 +35,7 @@ const AnecdoteList = ({ anecdotes }) => (
 const Anecdote = ({ anecdote }) => (
   <div>
     <h2>{anecdote.content} by {anecdote.author}</h2>
-    <p>has {anecdote.votes}</p>
+    <p>has {anecdote.votes} votes</p>
     <p>for more info see {anecdote.info}</p>
   </div>
 )
@@ -78,25 +78,48 @@ const Footer = () => (
   </div>
 )
 
+const useField = (type) => {
+  const [value, setValue] = useState('')
+
+  const onChange = (event) => {
+    setValue(event.target.value)
+  }
+
+  const clear = () => setValue('')
+
+  return {
+    value,
+    type,
+    onChange,
+    clear
+  }
+}
+
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const {clear: clearContent, ...content} = useField('text')
+  const {clear: clearAuthor, ...author} = useField('text')
+  const {clear: clearInfo, ...info} = useField('text')
   const history = useHistory()
-  
+
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
-    props.setNotification(`a new anecdote ${content} created!`)
+    props.setNotification(`a new anecdote ${content.value} created!`)
     setTimeout(() => {
       props.setNotification('')
     }, 10000)
     history.push('/')
+  }
+
+  const handleClear = () => {
+    clearContent()
+    clearAuthor()
+    clearInfo()
   }
 
   return (
@@ -105,17 +128,18 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...content} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...author} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input {...info} />
         </div>
         <button>create</button>
+        <button type='button' onClick={handleClear}>reset</button>
       </form>
     </div>
   )
