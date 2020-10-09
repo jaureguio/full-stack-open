@@ -1,9 +1,22 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { createBlog } from '../reducers/blogReducer'
+import styled from 'styled-components'
+import { Button } from '@material-ui/core'
 
-const BlogForm = ({ setVisibility, addBlog }) => {
+const CreateButton = styled(Button)`
+  && {
+    background-color: rgb(151, 240, 240);
+    color: black;
+    font-size: 0.75rem;
+  }
+`
+const BlogForm = ({ setVisibility }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const dispatch = useDispatch()
+
   const handleBlogSubmit = async (event) => {
     event.preventDefault()
 
@@ -13,12 +26,13 @@ const BlogForm = ({ setVisibility, addBlog }) => {
       url,
     }
 
-    await addBlog(blogData)
+    await dispatch( createBlog( blogData ) )
     setVisibility(false)
+    // As with the login action, creating a blog happens asynchronously whereas the blog form is hidden and cleared synchronously without waiting the createBlog action to complete
   }
 
   return (
-    <>
+    <div>
       <h2>create new blog</h2>
       <form onSubmit={handleBlogSubmit}>
         <div>
@@ -48,9 +62,15 @@ const BlogForm = ({ setVisibility, addBlog }) => {
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button type='submit'>create</button>
+        <CreateButton
+          size='small'
+          color='primary'
+          variant='contained'
+        >
+          create
+        </CreateButton>
       </form>
-    </>
+    </div>
   )
 }
 

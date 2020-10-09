@@ -1,72 +1,40 @@
-import React, { useState, useEffect } from 'react'
-import BlogForm from './BlogForm'
-import BlogDisplay from './BlogDisplay'
-import Togglable from './Togglable'
-import blogService from '../services/blogs'
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { Switch, Route, useRouteMatch } from 'react-router-dom'
+import { getAllBlogs } from '../reducers/blogReducer'
 
-const Blogs = ({ user, notify }) => {
-  const [ blogs, setBlogs ] = useState([])
+import BlogDisplay from './BlogDisplay'
+import AllBlogs from './AllBlogs'
+
+const Blogs = () => {
+  const match = useRouteMatch('/blogs/:id')
+  const blogs  = useSelector(state => state.blogs)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    blogService.setToken( user.token )
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
-  }, [ user.token ])
+    dispatch(getAllBlogs())
+  }, [dispatch]) // Unnecessary dependency
 
+  if(!blogs.length) return <p>Loading blogs...</p>
 
-  const addBlog = async ( blogData ) => {
-    const newBlog = await blogService
-      .createOne( blogData )
-
-    setBlogs([ ...blogs, newBlog ])
-    notify( `a new blog, '${ newBlog.title }' by ${ newBlog.author }, was added` )
-  }
-
-  const updateBlog = async ( newData ) => {
-    const newBlog = await blogService
-      .updateOne( newData )
-
-    const updatedBlogs = blogs.map(( blog ) => {
-      if( blog.id !== newBlog.id ) return blog
-      return newBlog
-    })
-    setBlogs( updatedBlogs )
-    notify( 'Blog updated successfully' )
-  }
-
-  const deleteBlog = async ( blogId ) => {
-    await blogService
-      .deleteOne( blogId )
-
-    const updatedBlogs = blogs.filter(({ id }) => blogId !== id)
-    setBlogs( updatedBlogs )
-    notify( 'Blog deleted successfully' )
-  }
-
-  const sortedBlogs = [...blogs].sort(( blogA, blogB ) => blogB.likes - blogA.likes )
+  const blogToDisplay = match
+    ? blogs.find(( blog ) => blog.id === match.params.id)
+    : null
 
   return (
-    <>
-      <h2>blogs</h2>
-      <Togglable buttonText='New note'>
-        {({ setVisibility }) => (
-          <BlogForm
-            setVisibility={setVisibility}
-            addBlog={ addBlog }
-          />
-        )}
-      </Togglable>
-      {sortedBlogs.map(( blog ) =>
-        <BlogDisplay
-          key={ blog.id }
-          blog={ blog }
-          publisher={ user.username }
-          updateBlog={ updateBlog }
-          deleteBlog={ deleteBlog }
-        />
-      )}
-    </>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+    }}>
+      <Switch>
+        <Route path='/blogs/:id'>
+          <BlogDisplay blog={blogToDisplay} />
+        </Route>
+        <Route path='/blogs'>
+          <AllBlogs blogs={blogs} />
+        </Route>
+      </Switch>
+    </div>
   )
 }
 

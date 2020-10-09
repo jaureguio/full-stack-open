@@ -1,16 +1,20 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
-const UserDisplay = ({ user, onLogout }) => (
-  <p>
-    {user.username} logged in
-    <button onClick={onLogout}>logout</button>
-  </p>
-)
+const UserDisplay = ({ user }) => {
 
-UserDisplay.propTypes = {
-  user: PropTypes.object.isRequired,
-  onLogout: PropTypes.func.isRequired
+  return (
+    <div>
+      <h2>{user.name}</h2>
+      <h3>added blogs</h3>
+      <ul>
+        {user.blogs.map(( blog ) => (
+          <li key={blog.id}>
+            {blog.title}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 
 export default UserDisplay

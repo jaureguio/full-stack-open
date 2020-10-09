@@ -1,50 +1,37 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { Route, Switch, Redirect } from 'react-router-dom'
+import styled from 'styled-components'
+
 import Notification from './components/Notification'
+import NavigationMenu from './components/NavigationMenu'
 import LoginForm from './components/LoginForm'
-import UserDisplay from './components/UserDisplay'
 import Blogs from './components/Blogs'
-import loginService from './services/login'
+import Users from './components/Users'
 
 const App = () => {
-  const [ user, setUser ] = useState(() => JSON.parse(window.localStorage.getItem( 'bloglist-user' )))
-  const [ notification, setNotification ] = useState( '' )
-
-  const notify = ( content, type = 'success' ) => {
-    setNotification({ content, type })
-    setTimeout(() => {
-      setNotification('')
-    }, 3000)
-  }
-
-  const login = async ( credentials ) => {
-    const { username, password } = credentials
-
-    const response = await loginService
-      .login({ username, password })
-
-    if(!response.error) {
-      setUser(response)
-      notify(`Welcome ${response.name.split(' ')[0]}`)
-      window.localStorage.setItem('bloglist-user', JSON.stringify(response))
-    } else {
-      notify('Incorrect username or password', 'error')
-    }
-  }
-
-  const logout = () => {
-    window.localStorage.removeItem('bloglist-user')
-    setUser(null)
-  }
+  const { authUser } = useSelector(state => state.authUser)
 
   return (
     <div>
-      <Notification notification={notification} />
-      {user === null
-        ? <LoginForm onLogin={login}/>
+      {authUser === null
+        ? <LoginForm />
         : (
           <div>
-            <UserDisplay user={user} onLogout={logout} />
-            <Blogs user={user} notify={notify} />
+            <NavigationMenu />
+            <Notification />
+            <H1>Blog App</H1>
+            <Switch>
+              <Route path='/users'>
+                <Users />
+              </Route>
+              <Route path='/blogs'>
+                <Blogs />
+              </Route>
+              <Route path='/'>
+                <Redirect to='/blogs' />
+              </Route>
+            </Switch>
           </div>
         )
       }
@@ -52,4 +39,14 @@ const App = () => {
   )
 }
 
+
+const H1 = styled.h1`
+  font-size: 3.5rem;
+  display: inline-block;
+  background-image: linear-gradient(to right, black, rgb(114, 114, 114));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 12px;
+`
 export default App

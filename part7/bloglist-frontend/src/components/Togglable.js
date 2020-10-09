@@ -1,4 +1,12 @@
 import React, { useState } from 'react'
+import styled from 'styled-components'
+import { Button } from '@material-ui/core'
+
+const CancelButton = styled(Button)`
+  && {
+    font-size: 0.75rem;
+  }
+`
 
 const Togglable = ({ buttonText, children }) => {
   const [ visibility, setVisibility ] = useState( false )
@@ -13,7 +21,14 @@ const Togglable = ({ buttonText, children }) => {
       </div>
       <div style={ showWhenVisible }>
         { children({ setVisibility }) }
-        <button onClick={ () => setVisibility( false ) }>cancel</button>
+        <CancelButton
+          size='small'
+          color='secondary'
+          variant='outlined'
+          onClick={ () => setVisibility( false ) }
+        >
+          cancel
+        </CancelButton>
       </div>
     </div>
   )

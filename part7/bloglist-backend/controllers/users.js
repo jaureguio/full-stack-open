@@ -32,4 +32,12 @@ router.post('/', async (request, response) => {
   response.json(savedUser)
 })
 
+router.get('/:id', async (request, response) => {
+  const user = await User
+    .findById(request.params.id)
+    .populate('blogs', { title: 1 })
+
+  response.json(user)
+})
+
 module.exports = router

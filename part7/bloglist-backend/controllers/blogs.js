@@ -10,6 +10,13 @@ router.get('/', async (request, response) => {
   response.json(blogs)
 })
 
+router.get('/:id', async (request, response) => {
+  const blog = await Blog
+    .findById(request.params.id)
+    .populate('user', { name: 1, username: 1 })
+  response.json(blog)
+})
+
 router.delete('/:id', async (request, response) => {
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if (!request.token || !decodedToken.id) {
@@ -63,6 +70,23 @@ router.post('/', async (request, response) => {
   await user.save()
 
   response.status(201).json(savedBlog)
+})
+
+router.post('/:id/comments', async (request, response) => {
+  const { comment } = request.body
+
+  const blogWithNewComment = await Blog
+    .findByIdAndUpdate(
+      request.params.id,
+      { $push: { comments: comment } },
+      { new: true },
+    )
+
+  const blogWithNewCommentPopulated = await blogWithNewComment
+    .populate('user', { name: 1, username: 1 })
+    .execPopulate()
+
+  response.status(201).json(blogWithNewCommentPopulated)
 })
 
 module.exports = router

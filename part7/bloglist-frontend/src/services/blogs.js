@@ -5,9 +5,19 @@ let token
 
 const setToken = (userToken) => token = userToken
 
+const authUser = window.localStorage.getItem('bloglist-user')
+if(authUser) {
+  setToken(JSON.parse(authUser).token)
+}
+
 const getAll = async () => {
-  const { data } = await axios.get(blogsUrl)
-  return data
+  const { data: blogs } = await axios.get(blogsUrl)
+  return blogs
+}
+
+const getOne = async (id) => {
+  const { data: blog } = await axios.get(`${blogsUrl}/${id}`)
+  return blog
 }
 
 const createOne = async ( blogData ) => {
@@ -31,4 +41,13 @@ const deleteOne = async ( blogId ) => {
     .delete(`${blogsUrl}/${blogId}`, { headers: { Authorization: `Bearer ${token}` } })
 }
 
-export default { setToken, getAll, createOne, updateOne, deleteOne }
+const commentOne = async ( blogId, comment ) => {
+  const { data: updatedBlog } = await axios
+    .post(
+      `${blogsUrl}/${blogId}/comments`,
+      { comment }
+    )
+  return updatedBlog
+}
+
+export default { setToken, getAll, getOne, createOne, updateOne, commentOne, deleteOne }

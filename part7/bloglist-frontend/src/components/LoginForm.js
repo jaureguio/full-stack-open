@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { login } from '../reducers/authReducer'
 
-const LoginForm = ({ onLogin }) => {
+const LoginForm = () => {
+  const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const handleLogin = async (event) => {
     event.preventDefault()
-
-    onLogin({ username, password })
+    await dispatch(login({ username, password }))
   }
 
   return (
