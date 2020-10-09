@@ -1,0 +1,24 @@
+[{
+  "blogs": [ "5f78f6c1a5f0177fd94c8587" ],
+  "_id": "5f78f6c0a5f0177fd94c8583",
+  "name": "Oscar Jauregui",
+  "username": "oscarj",
+  "passwordHash": "$2a$10$tM1YxmR55.8oXbtxHy2FFuVRgdqUesAWolA3X6vovJLgWOuRDfy3K",
+  "__v": 1
+},
+{
+  "blogs": [ "5f78f6c1a5f0177fd94c8588" ],
+  "_id": "5f78f6c0a5f0177fd94c8584",
+  "name": "Katiuska Guaita",
+  "username": "kbdv",
+  "passwordHash": "$2a$10$MCIHrWM5tYTqL1mAMbqCYObZbBas9Q3U78cjhNNJsYzofrPQ.q8NG",
+  "__v": 1
+},
+{
+  "blogs": [ "5f78f6c1a5f0177fd94c8586" ],
+  "_id": "5f78f6c0a5f0177fd94c8585",
+  "name": "Michael Chan",
+  "username": "mchan",
+  "passwordHash": "$2a$10$Yl3jJiNer9r0Ge8WTCSGYOvdq5oc/PvSADs5okivPIy3moZSxTORu",
+  "__v": 1
+}]
