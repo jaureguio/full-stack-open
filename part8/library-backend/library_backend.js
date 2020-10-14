@@ -140,7 +140,9 @@ const resolvers = {
     addBook: (_, args) => {
       books = books.concat(args)
 
-      const newAuthor = !authors.includes(({ name }) => name === args.author)
+      const newAuthor = !authors.some(({ name }) => {
+        return name === args.author
+      })
       if(newAuthor) {
         authors = authors.concat({
           name: args.author,
@@ -152,8 +154,7 @@ const resolvers = {
     },
     editAuthor: (_, args) => {
       const author = authors.find(( author ) => author.name === args.name)
-      console.log(author)
-      if(!author) return 
+      if(!author) return
 
       author.born = args.setBornTo
       return author
