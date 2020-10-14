@@ -1,0 +1,21 @@
+{
+  "name": "library_backend",
+  "version": "0.0.1",
+  "description": "FSO part 8 exercise implementation",
+  "main": "library_backend.js",
+  "scripts": {
+    "start": "node library_backend.js",
+    "dev": "nodemon library_backend.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Oscar Jauregui",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.18.2",
+    "graphql": "^15.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.5",
+    "uuid": "^8.3.1"
+  }
+}
