@@ -32,9 +32,7 @@ const Authors = (props) => {
     event.preventDefault()
 
     const { name, born } = event.target
-
     const data = { name: name.value, born: Number(born.value) }
-
     setBirthyear({ variables: data })
   }
 

@@ -5,16 +5,23 @@
   "main": "library_backend.js",
   "scripts": {
     "start": "node library_backend.js",
-    "dev": "nodemon library_backend.js",
+    "dev": "cross-env NODE_ENV=development nodemon library_backend.js",
+    "dev:local": "cross-env NODE_ENV=development nodemon library_backend.js local",
+    "dev:local:server": "mongod --dbpath 'C:\\Program Files\\MongoDB\\Server\\4.2\\data'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Oscar Jauregui",
   "license": "ISC",
   "dependencies": {
     "apollo-server": "^2.18.2",
-    "graphql": "^15.3.0"
+    "graphql": "^15.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.9",
+    "mongoose-unique-validator": "^2.0.3"
   },
   "devDependencies": {
+    "cross-env": "^7.0.2",
+    "dotenv": "^8.2.0",
     "nodemon": "^2.0.5",
     "uuid": "^8.3.1"
   }
