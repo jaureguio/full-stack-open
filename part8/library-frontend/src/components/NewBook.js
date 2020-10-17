@@ -11,8 +11,13 @@ const NEW_BOOK = gql`
       published: $published,
       genres: $genres
     ) {
+      id
       title
+      author {
+        name
+      }
       published
+      genres
     }
   }
 `
@@ -25,7 +30,22 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
 
   const [ createBook ] = useMutation(NEW_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    refetchQueries: [{ query: ALL_BOOKS, variables: { genre: '' } }],
+    update: (cache, { data: { addBook } }) => {
+      // This will update the cache for the query with the genre filter of the first element in the genres array from component state
+      // To update the cache for every query corresponding to each genre in the new book, the code below should be repeated for each of its genre
+      const { allBooks: prevBooks } = cache.readQuery({
+        query: ALL_BOOKS,
+        variables: { genre: genres[0] }
+      })
+      cache.writeQuery({
+        query: ALL_BOOKS,
+        variables: { genre: genres[0] },
+        data: {
+          allBooks: prevBooks.concat(addBook)
+        }
+      })
+    },
     onError: (error) => console.log(error)
   })
 
