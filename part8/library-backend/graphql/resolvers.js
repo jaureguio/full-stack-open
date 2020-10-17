@@ -6,8 +6,8 @@ const User = require('../models/user')
 const config = require('../utils/config')
 
 const resolvers = {
-  Mutation: {
-    addBook: async (_, args, context) => {
+Mutation: {
+    addBook: async (_, args) => {
       let bookAuthor = await Author.findOne({ name: args.author})
       if(!bookAuthor) {
         bookAuthor = await Author.create({
@@ -34,17 +34,23 @@ const resolvers = {
       const registeredUser = await User.findOne({ username: args.username })
       
       if(!(registeredUser && args.password === 'securepwd')) {
-        throw UserInputError('Invalid credentias', {
+        throw new UserInputError('Invalid credentias', {
           invalidArgs: args
         })
       }
+      
       const userForToken = {
         username: registeredUser.username,
         id: registeredUser._id,
       }
+
       const token = jwt.sign(userForToken, config.JWT_SECRET)
 
-      return { value: token }
+      return { 
+        username: registeredUser.username,
+        favGenre: registeredUser.favGenre,
+        token 
+      }
     }
   },
   Query: {

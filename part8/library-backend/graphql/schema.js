@@ -4,11 +4,14 @@ const typeDefs = gql`
   type User {
     username: String!
     name: String!
+    favGenre: String
     id: ID!
   }
 
-  type Token {
-    value: String!
+  type LoggedUser {
+    username: String!
+    favGenre: String
+    token: String!
   }
 
   type Book {
@@ -42,8 +45,12 @@ const typeDefs = gql`
       genres: [String!]!
     ): Book!
     editAuthor(name: String!, setBornTo: Int!): Author
-    createUser(username: String!, name: String!): User
-    login(username: String!, password: String!): Token
+    createUser(
+      username: String!,
+      name: String!,
+      favGenre: String
+    ): User
+    login(username: String!, password: String!): LoggedUser
   }
 `
 

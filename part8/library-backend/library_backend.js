@@ -30,13 +30,11 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
+    console.log(req.body.query);
     const auth = req ? req.headers.authorization : null
-    // console.log(auth)
     if( auth && auth.toLowerCase().startsWith('bearer ')) {
       const token = auth.substring(7)
-      // console.log(token, config.JWT_SECRET)
       const decodedToken = jwt.verify(token, config.JWT_SECRET)
-      console.log(decodedToken)
       const currentUser = await User.findById(decodedToken.id)
       return { currentUser }
     }
@@ -61,8 +59,8 @@ const server = new ApolloServer({
     return error
   },
   plugins: [{
-    requestDidStart({ req }) {
-      console.log('Request started! Query:\n', req.query)
+    requestDidStart(requestContext) {
+      console.log('Request started! Query:\n', requestContext.request.query)
     }
   }]
 })

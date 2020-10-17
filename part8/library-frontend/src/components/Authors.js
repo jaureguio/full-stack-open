@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useQuery, useMutation, gql } from '@apollo/client'
 
 export const ALL_AUTHORS = gql`
@@ -21,7 +21,6 @@ const SET_BIRTHYEAR = gql`
 `
 
 const Authors = (props) => {
-  const [selected, setSelected] = useState('')
   const results = useQuery(ALL_AUTHORS)
   const [ setBirthyear ] = useMutation(SET_BIRTHYEAR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
@@ -34,6 +33,9 @@ const Authors = (props) => {
     const { name, born } = event.target
     const data = { name: name.value, born: Number(born.value) }
     setBirthyear({ variables: data })
+    event.target.name.value = ''
+    event.target.born.value = null
+
   }
 
   if (!props.show)
@@ -65,33 +67,33 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-      <div>
-        <h3>Set birthyear</h3>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="name">Author</label>
-            <select
-              name='author'
-              id='name'
-              value={selected}
-              onChange={(event) => setSelected(event.target.value)}
-              required
-            >
-              <option value=''>--Please select an author--</option>
-              {
-                results.data.allAuthors.map(({ name, id }) => (
-                  <option key={id} value={name}>{name}</option>
-                ))
-              }
-            </select>
-          </div>
-          <div>
-            <label htmlFor='born'>born</label>
-            <input id='born' type='number'/>
-          </div>
-          <button>set birthyear</button>
-        </form>
-      </div>
+      {props.token && (
+        <div>
+          <h3>Set birthyear</h3>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="name">Author</label>
+              <select
+                id='name'
+                defaultValue=''
+                required
+              >
+                <option value=''>--Please select an author--</option>
+                {
+                  results.data.allAuthors.map(({ name, id }) => (
+                    <option key={id} value={name}>{name}</option>
+                  ))
+                }
+              </select>
+            </div>
+            <div>
+              <label htmlFor='born'>born</label>
+              <input id='born' type='number'/>
+            </div>
+            <button>set birthyear</button>
+          </form>
+        </div>
+      )}
     </div>
   )
 }

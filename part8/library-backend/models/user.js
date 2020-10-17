@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 3,
   },
+  favGenre: String
 })
 
 userSchema.plugin(uniqueValidator)
