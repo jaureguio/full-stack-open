@@ -1,4 +1,8 @@
-const { ApolloServer, UserInputError, AuthenticationError } = require('apollo-server')
+const {
+  ApolloServer,
+  UserInputError,
+  AuthenticationError
+} = require('apollo-server')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const config = require('./utils/config')
@@ -29,10 +33,13 @@ const resolvers = require('./graphql/resolvers')
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: async ({ req }) => {
-    console.log(req.body.query);
+  context: async ({ req, connection }) => {
+    if(connection) {
+      return connection.context
+    }
+    console.log(req.body.query)
     const auth = req ? req.headers.authorization : null
-    if( auth && auth.toLowerCase().startsWith('bearer ')) {
+    if(auth && auth.toLowerCase().startsWith('bearer ')) {
       const token = auth.substring(7)
       const decodedToken = jwt.verify(token, config.JWT_SECRET)
       const currentUser = await User.findById(decodedToken.id)
@@ -40,6 +47,16 @@ const server = new ApolloServer({
     }
     if(req.body.query.includes('addBook') || req.body.query.includes('editAuthor')) {
       throw new Error('not authenticated')
+    }
+  },
+  subscriptions: {
+    onConnect: (params) => {
+      if(params && params.authorization) {
+        const token = params.authorization
+        const currentUser = jwt.verify(token, config.JWT_SECRET)
+        console.log(currentUser)
+        return { currentUser }
+      }
     }
   },
   formatError: (error) => {
@@ -65,6 +82,7 @@ const server = new ApolloServer({
   }]
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })

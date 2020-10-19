@@ -1,12 +1,15 @@
-const { UserInputError } = require('apollo-server')
+const { PubSub, UserInputError } = require('apollo-server')
+const pubSub = new PubSub()
 const jwt = require('jsonwebtoken')
 const Author = require('../models/author')
 const Book = require('../models/book')
 const User = require('../models/user')
 const config = require('../utils/config')
 
+const NEW_BOOK = 'NEW_BOOK'
+
 const resolvers = {
-Mutation: {
+  Mutation: {
     addBook: async (_, args) => {
       let bookAuthor = await Author.findOne({ name: args.author})
       if(!bookAuthor) {
@@ -15,8 +18,11 @@ Mutation: {
         })
       }
       args.author = bookAuthor.id
-      await Book.create(args)
+      const bookAdded = await Book.create(args)
+      const bookAddedWithAuthorData = await bookAdded.populate('author').execPopulate()
+      console.log(bookAddedWithAuthorData)
       
+      pubSub.publish(NEW_BOOK, { bookAdded: bookAddedWithAuthorData })
       return await Book.findOne({ title: args.title }).populate('author')
     },
     editAuthor: async (_, args) => {
@@ -53,6 +59,11 @@ Mutation: {
       }
     }
   },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubSub.asyncIterator(NEW_BOOK)
+    }
+  },
   Query: {
     me: (_, args, context) => context.currentUser,
     bookCount: async () => await Book.countDocuments({}),
@@ -66,11 +77,26 @@ Mutation: {
       const filteredBooks = await Book.find({ genres: { $in: filters } }).populate('author')
       return filteredBooks
     },
-    allAuthors: async () => await Author.find({}),
+    // allAuthors: async () => await Author.find({}),
+    allAuthors: async () => await Author.aggregate([
+      {
+        $lookup: {
+          from: 'books',
+          foreignField: 'author',
+          localField: '_id',
+          as: 'bookCount'
+        }
+      },
+      {
+        $addFields: {
+          bookCount: { $size: '$bookCount'},
+        }
+      }
+    ])
   },
   Author: {
-    bookCount: async (parent) => 
-      await Book.find({ author: parent.id }).countDocuments({}),
+    // bookCount: async (parent) => 
+    //   await Book.find({ author: parent.id }).countDocuments({}),
   }
 }
 

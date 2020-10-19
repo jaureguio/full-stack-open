@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useLazyQuery, gql } from '@apollo/client'
+import { useLazyQuery, useSubscription, gql } from '@apollo/client'
 
 export const ALL_BOOKS = gql`
   query filteredBooks (
@@ -20,27 +20,75 @@ export const ALL_BOOKS = gql`
     }
   }
 `
+const BOOKS_SUBSCRIPTION = gql`
+  subscription onBookAdded {
+    bookAdded {
+      id
+      title
+      author {
+        name
+      }
+      published
+      genres
+    }
+  }
+`
+
+export const updateBookCache = (client, newBook, variable) => {
+  let query
+  try {
+    query = client.readQuery({
+      query: ALL_BOOKS,
+      variables: { genre: variable }
+    })
+
+    const isBookInCacheAlready = query.allBooks.find((book) => book.id === newBook.id)
+    if(isBookInCacheAlready) return
+  } catch (error) {
+    console.log('No query in cache matching the one specified', variable)
+    return
+  }
+  const { allBooks } = query
+  client.writeQuery({
+    query: ALL_BOOKS,
+    variables: { genre: variable },
+    data: {
+      allBooks: allBooks.concat(newBook)
+    }
+  })
+}
 
 const Books = (props) => {
   const [booksFilter, setBooksFilter] = useState('')
   const [allBooks, setAllBooks] = useState([])
+  const [newBook, setNewBook] = useState('')
   const [getBooks, results] = useLazyQuery(ALL_BOOKS)
+
+  useSubscription(BOOKS_SUBSCRIPTION, {
+    onSubscriptionData: ({ client, subscriptionData }) => {
+      // console.log('SUBSCRIPTION')
+      const { bookAdded } = subscriptionData.data
+      setNewBook(bookAdded.title)
+      setTimeout(() => {
+        setNewBook('')
+      }, 5000);
+
+      ['', ...bookAdded.genres].forEach(( filter ) => updateBookCache(client, bookAdded, filter))
+      // updateBookCache(client, '', bookAdded)
+      // updateBookCache(client, bookAdded.genres[0], bookAdded)
+    }
+  })
 
   const getFilteredBooks = (genreFilter) => {
     getBooks({ variables: { genre: genreFilter } })
   }
 
-  // =D sorry for all this conditional mess
-  // All this complicated logic is due to the fact that i'm implementing a unique view to conditionally show either all books, filtered books, or recommended books.
-  // A simplification to all this is achieved implementing a different view for the recommendations section
   useEffect(() => {
-    console.log('EFFECT 1')
-    getFilteredBooks(props.recommended ? props.recommended : booksFilter)
-  }, [props.recommended, booksFilter]) // eslint-disable-line
+    getFilteredBooks(booksFilter)
+  }, [booksFilter]) // eslint-disable-line
 
   useEffect(() => {
-    console.log('EFFECT 2', results.data)
-    if(results?.data && !props.recommended && !booksFilter) {
+    if(results.data && !booksFilter) {
       setAllBooks(results.data.allBooks)
     }
   }, [results.data]) // eslint-disable-line
@@ -60,15 +108,9 @@ const Books = (props) => {
 
   return (
     <div>
-      {props.recommended
-        ? (
-          <div>
-            <h2>recommendations</h2>
-            <p>books in your favourite genre <strong>{props.recommended}</strong></p>
-          </div>
-        )
-        : <h2>books</h2>
-      }
+      <h2>books</h2>
+
+      {newBook && <p>New book added: {newBook}</p>}
 
       <table>
         <tbody>
@@ -90,21 +132,15 @@ const Books = (props) => {
           )}
         </tbody>
       </table>
-      {props.recommended
-        ? null
-        : (
-          <>
-            <button onClick={() => setBooksFilter('')}>all</button>
-            {allGenres.map(( genre ) => (
-              <button
-                key={genre}
-                onClick={() => setBooksFilter(genre)}
-              >
-                {genre}
-              </button>
-            ))}
-          </>
-        )}
+      <button onClick={() => setBooksFilter('')}>all</button>
+      {allGenres.map(( genre ) => (
+        <button
+          key={genre}
+          onClick={() => setBooksFilter(genre)}
+        >
+          {genre}
+        </button>
+      ))}
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useMutation, gql } from '@apollo/client'
-import { ALL_BOOKS } from './Books'
-import { ALL_AUTHORS } from './Authors'
+import { updateBookCache } from './Books'
 
 const NEW_BOOK = gql`
   mutation newBook($title: String!, $author: String!, $published: Int!, $genres: [String!]!) {
@@ -30,21 +29,11 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
 
   const [ createBook ] = useMutation(NEW_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS, variables: { genre: '' } }],
+    // Refetching the initial query becomes unnecessary when implementing the subscription from Books component. The subscription already handles the cache update for the initial query (variables: { genre: '' })
+    // refetchQueries: [{ query: ALL_BOOKS, variables: { genre: '' } }],
     update: (cache, { data: { addBook } }) => {
-      // This will update the cache for the query with the genre filter of the first element in the genres array from component state
-      // To update the cache for every query corresponding to each genre in the new book, the code below should be repeated for each of its genre
-      const { allBooks: prevBooks } = cache.readQuery({
-        query: ALL_BOOKS,
-        variables: { genre: genres[0] }
-      })
-      cache.writeQuery({
-        query: ALL_BOOKS,
-        variables: { genre: genres[0] },
-        data: {
-          allBooks: prevBooks.concat(addBook)
-        }
-      })
+      // console.log('MUTATION');
+      ['', ...addBook.genres].forEach(( filter ) => updateBookCache(cache, addBook, filter))
     },
     onError: (error) => console.log(error)
   })
