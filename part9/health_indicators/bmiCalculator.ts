@@ -1,15 +1,16 @@
 const bmiInputs = process.argv.slice(2) // @ts-ignore
-
-if(bmiInputs.length < 2) {
-  console.log('Please check your inputs: weight (kg) and height (cm) values are expected')
-  process.exit()
-}
-
 const [ height, weight ] = bmiInputs.map(Number)
 
-console.log(calculateBmi(height,weight))
+if(require.main === module) {
+  if(bmiInputs.length < 2) {
+    console.log('Please check your inputs: weight (kg) and height (cm) values are expected')
+    process.exit()
+  }
 
-function calculateBmi(height: number, weight: number): string  {
+  console.log(calculateBmi(height,weight))
+}
+
+export default function calculateBmi(height: number, weight: number): string  {
   if(weight <= 0 || height <= 0) return 'Check your inputs, greater-than zero arguments expected'
 
   const bmi: number = Math.round(100*weight/Math.pow(height/100,2))/100
