@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/patients
+Content-Type: application/json
+
+{
+ "name": "Oscar Jauregui",
+ "ssn": "2345234jsd23452-qwe143",
+ "dateOfBirth": "1991-07-13",
+ "occupation": "web developer",
+ "gender": "male" 
+}
