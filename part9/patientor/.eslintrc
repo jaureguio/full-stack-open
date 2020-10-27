@@ -5,7 +5,7 @@
         "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
-    "plugins": ["@typescript-eslint", "react"],
+    "plugins": ["@typescript-eslint", "react", "react-hooks"],
     "env": {
       "browser": true,
       "es6": true

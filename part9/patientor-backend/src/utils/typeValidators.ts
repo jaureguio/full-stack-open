@@ -12,6 +12,7 @@ export const toValidPatient = (obj: Record<string, unknown>): Patient => ({
   ssn: toValidString(obj.ssn),
   gender: toValidGender(obj.gender),
   occupation: toValidString(obj.occupation),
+  entries: [],
 });
 
 export const toPublicPatient = ({ ssn: _ssn, ...publicPatient }: Patient): PublicPatient => publicPatient;
@@ -34,4 +35,4 @@ const toValidGender = (val: any): Gender => {
 
 const isGender = (val: any): val is Gender => Object.values(Gender).includes(val);
 
-export type StrictPropertyCheck<T,TExpected, TError> = Exclude<T, TExpected> extends never ? Record<string, unknown> : TError;
+// export type StrictPropertyCheck<T,TExpected, TError> = Exclude<T, TExpected> extends never ? Record<string, unknown> : TError;

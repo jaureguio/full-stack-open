@@ -3,7 +3,7 @@ import cors from 'cors';
 
 import { diagnosesData } from '../data/diagnoses';
 import { patientsData } from '../data/patients';
-import { Diagnose, PublicPatient } from "./utils/types";
+import { Diagnose, Patient, PublicPatient } from "./utils/types";
 import { toValidPatient, toPublicPatient } from './utils/typeValidators';
 
 const app = express();
@@ -23,6 +23,19 @@ app.get('/api/ping', (_req, res) => {
 app.get('/api/diagnoses', (_req, res) => {
   res.json(diagnoses);
 });
+
+app
+  .route('/api/patients/:id')
+  .get((req, res) => {
+    const { id: requestedPatient } = req.params;
+    const patient: Patient | undefined = patientsData.find(({ id }) => requestedPatient === id);
+
+    if(!patient) {
+      res.status(404).json({ error: 'patient not found' });
+    } else {
+      res.json(patient);
+    }
+  });
 
 app
   .route('/api/patients')
