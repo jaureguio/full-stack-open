@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "date": "2020-11-01",
+  "type": "OccupationalHealthcare",
+  "specialist": "MD House",
+  "diagnosisCodes": ["Z74.3"],
+  "employerName": "Oscar Jauregui",
+  "description": "Patient mistakenly found himself in a nuclear plant waste site without protection gear HAHA"
+}

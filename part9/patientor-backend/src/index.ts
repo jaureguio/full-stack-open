@@ -3,8 +3,8 @@ import cors from 'cors';
 
 import { diagnosesData } from '../data/diagnoses';
 import { patientsData } from '../data/patients';
-import { Diagnose, Patient, PublicPatient } from "./utils/types";
-import { toValidPatient, toPublicPatient } from './utils/typeValidators';
+import { Diagnose, Patient, PublicPatient, Entry } from "./utils/types";
+import { toValidPatient, toPublicPatient, toValidEntry} from './utils/typeValidators';
 
 const app = express();
 const PORT = 3001;
@@ -23,6 +23,26 @@ app.get('/api/ping', (_req, res) => {
 app.get('/api/diagnoses', (_req, res) => {
   res.json(diagnoses);
 });
+
+app
+  .route('/api/patients/:id/entries')
+  .post((req, res) => {
+    const patientId: string = req.params.id;
+    const patientFromApi: Patient | undefined = patientsData.find(({ id }) => patientId === id);
+
+    if(!patientFromApi) {
+      return res.status(404).json({ error: 'patient not found' });
+    }
+
+    try {
+      const newEntry = toValidEntry(req.body) as Entry;
+      patientFromApi.entries.push(newEntry);
+      return res.status(201).json(patientFromApi.entries[patientFromApi.entries.length - 1]);
+    } catch (error) {
+      const newError = error as Error;
+      return res.status(404).json({ error: newError.message });
+    }  
+  });
 
 app
   .route('/api/patients/:id')
@@ -44,7 +64,7 @@ app
   })
   .post((req, res) => {
     try {
-      const addedPatient = toValidPatient(req.body);
+      const addedPatient: Patient = toValidPatient(req.body);
       // Excess property checks not enforced here, and it should!, for example, a type Patient should not be pushed to the publicPatients array
       publicPatients.push(toPublicPatient(addedPatient));
       

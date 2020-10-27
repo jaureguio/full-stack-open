@@ -4,39 +4,41 @@ export interface Diagnose {
   latin?: string;
 }
 
-interface BaseEntry {
+export interface BaseEntry {
   id: string;
   date: string;
   specialist: string;
-  type: string;
   description: string;
   diagnosisCodes?: string[];
 }
 
-interface OccupationalHealthCareEntry extends BaseEntry {
-  type: 'OccupationalHealthcare';
+export interface SickLeave {
+  startDate: string;
+  endDate: string;
+}
+
+export interface OccupationalHealthCareEntry extends BaseEntry {
+  type: EntryType.OccupationalHealthcare;
   employerName: string;
-  sickLeave?: {
-    startDate: string;
-    endDate: string;
-  };
+  sickLeave?: SickLeave
 }
 
-interface Hospital extends BaseEntry {
-  type: 'Hospital';
-  discharge: {
-    date: string;
-    criteria: string;
-  };
+export interface Discharge {
+  date: string;
+  criteria: string;
 }
 
-interface HealthCheck extends BaseEntry {
-  type: 'HealthCheck';
+export interface HospitalEntry extends BaseEntry {
+  type: EntryType.Hospital;
+  discharge: Discharge
+}
+
+export interface HealthCheckEntry extends BaseEntry {
+  type: EntryType.HealthCheck;
   healthCheckRating: number;
-  sickLeave?: string;
 }
 
-export type Entry = OccupationalHealthCareEntry | Hospital | HealthCheck;
+export type Entry = OccupationalHealthCareEntry | HospitalEntry | HealthCheckEntry;
 
 export interface Patient {
   id: string;
@@ -50,9 +52,14 @@ export interface Patient {
 
 export type PublicPatient = Omit<Patient, 'ssn'>;
 
-
 export enum Gender {
   MALE = 'male',
   FEMALE = 'female',
   OTHER = 'other'
+}
+
+export enum EntryType {
+  OccupationalHealthcare = 'OccupationalHealthcare',
+  HealthCheck = 'HealthCheck',
+  Hospital = 'Hospital'
 }
