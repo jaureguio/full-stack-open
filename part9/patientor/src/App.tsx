@@ -1,14 +1,14 @@
-import React from "react";
-import axios from "axios";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-import { Button, Divider, Header, Container } from "semantic-ui-react";
+import React from 'react';
+import axios from 'axios';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import { Button, Divider, Header, Container } from 'semantic-ui-react';
 
-import { apiBaseUrl } from "./constants";
-import { useStateValue, setPatientList } from "./state";
-import { Patient } from "./types";
+import { apiBaseUrl } from './constants';
+import { useStateValue, setPatientList } from './state';
+import { Patient } from './types';
 
-import PatientListPage from "./PatientListPage";
-import PatientDisplay from "./PatientListPage/PatientDisplay";
+import PatientListPage from './PatientListPage';
+import PatientDisplay from './PatientDisplayPage';
 
 const App: React.FC = () => {
   const [, dispatch] = useStateValue();
@@ -29,17 +29,17 @@ const App: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <div className="App">
+    <div className='App'>
       <Router>
         <Container>
-          <Header as="h1">Patientor</Header>
-          <Button as={Link} to="/" primary>
+          <Header as='h1'>Patientor</Header>
+          <Button as={Link} to='/' primary>
             Home
           </Button>
           <Divider hidden />
           <Switch>
-            <Route path="/patients/:id" component={PatientDisplay} />
-            <Route path="/" component={PatientListPage} />
+            <Route path='/patients/:id' component={PatientDisplay} />
+            <Route path='/' component={PatientListPage} />
           </Switch>
         </Container>
       </Router>

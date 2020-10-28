@@ -5,22 +5,22 @@ export interface Diagnosis {
 }
 
 export enum Gender {
-  Male = "male",
-  Female = "female",
-  Other = "other"
+  Male = 'male',
+  Female = 'female',
+  Other = 'other'
 }
 
 interface BaseEntry {
   id: string;
   date: string;
   specialist: string;
-  type: string;
+  type: EntryType;
   description: string;
   diagnosisCodes?: string[];
 }
 
 interface OccupationalHealthCareEntry extends BaseEntry {
-  type: 'OccupationalHealthcare';
+  type: EntryType.OccupationalHealthcare;
   employerName: string;
   sickLeave?: {
     startDate: string;
@@ -29,7 +29,7 @@ interface OccupationalHealthCareEntry extends BaseEntry {
 }
 
 interface Hospital extends BaseEntry {
-  type: 'Hospital';
+  type: EntryType.Hospital;
   discharge: {
     date: string;
     criteria: string;
@@ -37,12 +37,19 @@ interface Hospital extends BaseEntry {
 }
 
 interface HealthCheck extends BaseEntry {
-  type: 'HealthCheck';
+  type: EntryType.HealthCheck;
   healthCheckRating: number;
-  sickLeave?: string;
 }
 
 export type Entry = OccupationalHealthCareEntry | Hospital | HealthCheck;
+
+export enum EntryType {
+  OccupationalHealthcare = 'OccupationalHealthcare',
+  HealthCheck = 'HealthCheck',
+  Hospital = 'Hospital'
+}
+
+export type EntryFormValues = Omit<Entry, 'id'>;
 
 export interface Patient {
   id: string;
@@ -54,4 +61,4 @@ export interface Patient {
   entries: Entry[];
 }
 
-export type PatientDict = Record<string, Patient>;
+export type PatientsDict = Record<string, Patient>;

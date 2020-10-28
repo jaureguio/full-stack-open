@@ -29,12 +29,25 @@ function toValidString(val: any): string {
   throw new Error(`Incorrect or missing type`);
 }
 
+function isFormatted(val: string): boolean {
+  return /\b\d{4}-\d{2}-\d{2}\b/.test(val);
+}
+
+function toValidDate(val: any): string {
+  if(val && isString(val) && isFormatted(val)) {
+    return val;
+  }
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  throw new Error(`Missing or incorrectly formatted date value: ${val}`);
+  
+}
+
 function isNumeric(val: any): val is number {
   return !Number.isNaN(val) && typeof val === 'number';
 }
 
 function toValidNumber(val: any): number {
-  if (val && isNumeric(val)) {
+  if (isNumeric(val)) {
     return val;
   }
   throw new Error(`Incorrect or missing type`);
@@ -104,7 +117,7 @@ export function toPublicPatient({ ssn: _ssn, ...publicPatient }: Patient): Publi
 export function toValidEntry(obj: Record<string, unknown>): Entry | void {
   const baseEntry: BaseEntry = {
     id: uuid(),
-    date: toValidString(obj.date),
+    date: toValidDate(obj.date),
     specialist: toValidString(obj.specialist),
     description: toValidString(obj.description),
     diagnosisCodes: toValidDiagnoses(obj.diagnosisCodes)
@@ -143,7 +156,6 @@ export function toValidEntry(obj: Record<string, unknown>): Entry | void {
   }
 }
 
-export function assertNever (val: never): never {
-  throw new Error(`Unhandled entry ${JSON.stringify(val)}`); 
-}
-// export type StrictPropertyCheck<T,TExpected, TError> = Exclude<T, TExpected> extends never ? Record<string, unknown> : TError;
+// export function assertNever (val: never): never {
+//   throw new Error(`Unhandled entry ${JSON.stringify(val)}`); 
+// }
