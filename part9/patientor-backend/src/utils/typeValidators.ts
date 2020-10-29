@@ -66,7 +66,7 @@ function toValidGender(val: any): Gender {
 
 function isSickLeave(obj: Record<string, any>): obj is SickLeave {
   return Object.keys(obj).every((field) => {
-    return !(['startDate', 'endDate'].includes(field) && isString(obj[field]));
+    return ['startDate', 'endDate'].includes(field) && isString(obj[field]);
   });
 }
 
@@ -114,7 +114,7 @@ export function toPublicPatient({ ssn: _ssn, ...publicPatient }: Patient): Publi
   return publicPatient;
 }
 
-export function toValidEntry(obj: Record<string, unknown>): Entry | void {
+export function toValidEntry(obj: Record<string, any>): Entry | void {
   const baseEntry: BaseEntry = {
     id: uuid(),
     date: toValidDate(obj.date),
@@ -138,7 +138,7 @@ export function toValidEntry(obj: Record<string, unknown>): Entry | void {
         type: EntryType.OccupationalHealthcare,
         employerName: toValidString(obj.employerName),
       };
-      if (obj.sickLeave) {
+      if (Object.keys(obj.sickLeave).length > 0) {
         OHCEntry.sickLeave = toValidSickLeave(obj.sickLeave);
       }
       return OHCEntry;

@@ -2,7 +2,7 @@ import React from "react";
 import { Grid, Button } from "semantic-ui-react";
 import { Field, Formik, Form } from "formik";
 
-import { TextField, SelectField, GenderOption } from "./FormField";
+import { TextField, SelectField, Option } from "./FormField";
 import { Gender, Patient } from "../types";
 
 /*
@@ -16,7 +16,7 @@ interface Props {
   onCancel: () => void;
 }
 
-const genderOptions: GenderOption[] = [
+const genderOptions: Option[] = [
   { value: Gender.Male, label: "Male" },
   { value: Gender.Female, label: "Female" },
   { value: Gender.Other, label: "Other" }
@@ -51,7 +51,7 @@ export const AddPatientForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         return errors;
       }}
     >
-      {({ isValid, dirty }) => {
+      {({ isValid, dirty, handleChange }) => {
         return (
           <Form className="form ui">
             <Field
@@ -82,6 +82,7 @@ export const AddPatientForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
               label="Gender"
               name="gender"
               options={genderOptions}
+              onChange={handleChange}
             />
             <Grid>
               <Grid.Column floated="left" width={5}>

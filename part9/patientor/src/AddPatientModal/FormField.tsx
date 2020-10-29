@@ -1,11 +1,11 @@
-import React from "react";
+import React, { SyntheticEvent} from "react";
 import { ErrorMessage, Field, FieldProps, FormikProps } from "formik";
 import { Dropdown, DropdownProps, Form } from "semantic-ui-react";
-import { Diagnosis, Gender } from "../types";
+import { Diagnosis, Gender, EntryType } from "../types";
 
 // structure of a single option
-export type GenderOption = {
-  value: Gender;
+export type Option = {
+  value: Gender | EntryType;
   label: string;
 };
 
@@ -13,17 +13,24 @@ export type GenderOption = {
 type SelectFieldProps = {
   name: string;
   label: string;
-  options: GenderOption[];
+  options: Option[];
+  onChange?: (e: SyntheticEvent) => void;
 };
 
 export const SelectField: React.FC<SelectFieldProps> = ({
   name,
   label,
-  options
+  options,
+  onChange
 }: SelectFieldProps) => (
   <Form.Field>
     <label>{label}</label>
-    <Field as="select" name={name} className="ui dropdown">
+    <Field 
+      as="select"
+      name={name}
+      className="ui dropdown"
+      onChange={onChange}
+    >
       {options.map(option => (
         <option key={option.value} value={option.value}>
           {option.label || option.value}
