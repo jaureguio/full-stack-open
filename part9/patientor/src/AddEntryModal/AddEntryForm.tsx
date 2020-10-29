@@ -10,7 +10,7 @@ import {
   HealthCheck,
   Hospital
 } from '../types';
-import { /* inRangeInclusive, isFormatted, */ assertNever } from '../typeValidators';
+import { inRangeInclusive, isFormatted, assertNever } from '../typeValidators';
 
 import {
   TextField,
@@ -79,39 +79,137 @@ const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
 
   return (
     <Formik
-      // enableReinitialize make Formik to deep-compare initialValues prop passed on each form re-rendering
+      /**
+       * 
+       * enableReinitialize makes Formik to deep-compare new 'initialValues'
+       * prop against its value from previous render. Form is reinitialized if changes.
+       * 
+       */
       enableReinitialize
       initialValues={initialValues}
       onSubmit={onSubmit}
       validate={(values) => {
-        // const requiredError = 'Please, check your input';
-        const errors: Record<string, string> = {};
+        const {
+          date,
+          specialist,
+          type,
+          description,
+        } = values;
 
-        // if(!type) {
-        //   errors.type = requiredError;
-        // }
-        // if (!isFormatted(date)) {
-        //   errors.date = `Missing or incorrectly formatted date value: ${date}`;
-        // }
-        // if (!description) {
-        //   errors.description = requiredError;
-        // }
-        // if (!(diagnosisCodes.length)) {
-        //   errors.diagnosesCode = requiredError;
-        // }
-        // if (!specialist) {
-        //   errors.specialist = requiredError;
-        // }
-        // if (!inRangeInclusive({
-        //   min: 0,
-        //   max: 3,
-        //   value: healthCheckRating
-        // })) {
-        //   errors.healthCheckRating = 'value must be between 0 and 3';
-        // }
-        console.log('VALIDATE', values);
+        const requiredError = 'A value is required';
+        const dateFormatError = (date: string, required = false) => `Incorrectly formatted ${required ? `or missing` : null} date value: ${date}`;
+
+
+        type BaseEntryErrors = Record<keyof EntryFormValues, string>;
+        type HealthCheckEntryErrors = { healthCheckRating: string };
+        type HospitalEntryErrors = {
+          discharge: {
+            date?: string;
+            criteria?: string;
+          };
+        };
+        type OccupationalHealthcareEntryErrors = {
+          employerName: string;
+          sickLeave?: {
+            startDate?: string;
+            endDate?: string;
+          };
+        };
+
+        /**
+         *
+         * Generic intersection with conditional types
+         * https://www.typescriptlang.org/docs/handbook/advanced-types.html#conditional-types
+         * 
+         * 'Errors' is a generic intersection between type 'BaseEntryErrors' and one of
+         * 'HealthCheckEntryErrors', 'HospitalEntryErrors' or
+         * 'OccupationalHealthcareEntryErrors'. Which one is picked for the intersection
+         * is determined based on the type which T is extending from.
+         *
+         */
+        type Errors<T> = BaseEntryErrors & (T extends EntryType.HealthCheck
+        ? HealthCheckEntryErrors
+        : T extends EntryType.Hospital 
+        ? HospitalEntryErrors
+        : T extends EntryType.OccupationalHealthcare
+        ? OccupationalHealthcareEntryErrors
+        : never);
+
+        const baseErrors = {} as Errors<typeof type>;
+
+        if (!isFormatted(date)) {
+          baseErrors.date = dateFormatError(date, true);
+        }
+        if (!specialist) {
+          baseErrors.specialist = requiredError;
+        }
+        if(!type) {
+          baseErrors.type = requiredError;
+        }
+        if (!description) {
+          baseErrors.description = requiredError;
+        }
+
+        /**
+         * 
+         * Checking type-specific errors from inputs
+         * 
+         * Note: type assertions have to be done for both 'values' and 'baseErrors'
+         *       variables in order to both get and set properties from them
+         *       in accordingly. I couldn't figure out why 'if' statements are
+         *       not enough to make the compiler determine type of 'values.type'
+         *       even though each block scope/context sets the type accordingly.
+         * 
+         */
+
+        let typeSpecificErrors: Errors<typeof type> = {} as Errors<typeof type>;
+        if(type === EntryType.HealthCheck) {
+          const { healthCheckRating } = values as HealthCheck;
+          typeSpecificErrors = baseErrors as Errors<typeof type>;
+
+          if (!inRangeInclusive({
+            min: 0,
+            max: 3,
+            value: healthCheckRating
+          })) {
+            typeSpecificErrors.healthCheckRating = 'value must be between 0 and 3';
+          }
+        } else if(type === EntryType.Hospital) {          
+          const { discharge } = values as Hospital;
+          typeSpecificErrors = baseErrors as Errors<typeof type>;
+          
+          if(!isFormatted(discharge.date)) {
+            typeSpecificErrors.discharge = {
+              date: dateFormatError(discharge.date, true)
+            };
+          }
+          if(!discharge.criteria) {
+            typeSpecificErrors.discharge = {
+              ...typeSpecificErrors.discharge,
+              criteria: requiredError
+            };
+          }
+        } else if(type === EntryType.OccupationalHealthcare) {
+          const { employerName, sickLeave } = values as OccupationalHealthCareEntry;
+          typeSpecificErrors = baseErrors as Errors<typeof type>;
+
+          if(!employerName) {
+            typeSpecificErrors.employerName = requiredError;
+          }
+          if(sickLeave && !isFormatted(sickLeave.startDate)) {
+            typeSpecificErrors.sickLeave = {
+              startDate: dateFormatError(sickLeave.startDate)
+            };
+          }
+          if(sickLeave && !isFormatted(sickLeave.endDate)) {
+            typeSpecificErrors.sickLeave = {
+              ...typeSpecificErrors.sickLeave,
+              endDate: dateFormatError(sickLeave.endDate)
+            };
+          }
+        }
         
-        return errors;
+        return typeSpecificErrors;
       }}
     >
       {({
@@ -144,10 +242,14 @@ const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
               name='type'
               options={typeOptions}
               onChange={(e) => {
-                /* 
-                  type assertions implemented in order to access and set to state the value property from e.target, which otherwise is not allowed by the compiler (TS)
-                  https://github.com/ant-design/ant-design/issues/6879#issuecomment-405451420  
-                */
+              /**
+               *  
+               * Type assertions on the event parameter 'e' are implemented in order
+               * to allow access to the 'value' property from e.target, which otherwise
+               * is not allowed by the compiler.
+               * https://github.com/ant-design/ant-design/issues/6879#issuecomment-405451420
+               * 
+               */
                 const entryTypeFromForm = (e.target as HTMLSelectElement).value as EntryType;
                 setBaseValues({
                   date: values.date,
